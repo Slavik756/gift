@@ -1,0 +1,220 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
+.app {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at center, rgba(255, 77, 109, 0.06), transparent 34rem), #050505;
+  color: white;
+}
+
+.app.ready { cursor: pointer; }
+
+.scanline {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(0deg, transparent 0%, rgba(255, 255, 255, 0.025) 50%, transparent 100%);
+  opacity: 0.2;
+  pointer-events: none;
+  animation: scanline 10s linear infinite;
+}
+
+.console-screen,
+.reveal-screen {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.console {
+  width: min(100%, 680px);
+  color: rgba(255, 255, 255, 0.78);
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: clamp(0.86rem, 2.4vw, 1rem);
+}
+
+.console-line {
+  display: flex;
+  min-height: 28px;
+  gap: 10px;
+  align-items: center;
+}
+
+.tag { color: rgba(255, 143, 177, 0.62); white-space: nowrap; }
+.status { color: #4ade80; }
+
+.package {
+  display: grid;
+  gap: 24px;
+  justify-items: start;
+  padding-top: 46px;
+  animation: packageEnter 480ms ease both;
+}
+
+.package p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.38);
+  font-style: italic;
+}
+
+.decrypt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(255, 77, 109, 0.32);
+  background: rgba(255, 77, 109, 0.05);
+  color: #ff8fb1;
+  padding: 13px 24px;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 220ms ease, border-color 220ms ease, transform 220ms ease;
+}
+
+.decrypt:hover {
+  border-color: rgba(255, 77, 109, 0.58);
+  background: rgba(255, 77, 109, 0.1);
+  transform: translateY(-1px);
+}
+
+.lock {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+}
+
+.lock::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 2px;
+  width: 8px;
+  height: 9px;
+  border: 2px solid currentColor;
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+}
+
+.terminal-cursor {
+  display: inline-block;
+  height: 16px;
+  border-right: 2px solid #ff4d6d;
+  animation: blink 1s step-end infinite;
+}
+
+.hint {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.62rem;
+  animation: hintPulse 1.6s ease-in-out infinite;
+}
+
+.reveal-screen { overflow: hidden; }
+
+.heart-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.center-message {
+  position: relative;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  animation: centerEnter 1500ms ease 3000ms both;
+}
+
+.center-message h1 {
+  margin: 0;
+  color: #ff4d6d;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: clamp(1.1rem, 5vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 77, 109, 0.5), 0 0 20px rgba(255, 77, 109, 0.3);
+}
+
+.divider {
+  width: 48px;
+  height: 1px;
+  margin: 12px auto 30px;
+  background: rgba(255, 77, 109, 0.3);
+}
+
+.reencrypt {
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.22);
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.63rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.reencrypt:hover { color: rgba(255, 255, 255, 0.62); }
+
+.debug {
+  position: absolute;
+  z-index: 3;
+  color: rgba(255, 255, 255, 0.1);
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  line-height: 1.75;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.debug.left { top: 32px; left: 32px; }
+.debug.right { right: 32px; bottom: 32px; }
+
+@keyframes blink {
+  from, to { border-color: transparent; }
+  50% { border-color: #ff4d6d; }
+}
+
+@keyframes scanline {
+  0% { bottom: 100%; }
+  100% { bottom: -100px; }
+}
+
+@keyframes packageEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes centerEnter {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 560px) {
+  .console-screen,
+  .reveal-screen { padding: 24px; }
+  .console-line { align-items: flex-start; }
+  .decrypt { width: 100%; justify-content: center; padding-inline: 16px; }
+  .debug.left { top: 18px; left: 18px; }
+  .debug.right { right: 18px; bottom: 18px; }
+}
