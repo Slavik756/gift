@@ -18,9 +18,15 @@ function App() {
   const galaxyRef = useRef(null)
 const galaxyAnim = useRef(null)
 
+const heartAnimRef = useRef(null)
 const intervalsRef = useRef([])
 const timeoutsRef = useRef([])
+const starsRef = useRef([])
+const photoGalaxyRef = useRef(null)
+const photoGalaxyAnim = useRef(null)
+const photoStarsRef = useRef([])
 
+const [photoIndex, setPhotoIndex] = useState(0)
   const [typedText, setTypedText] = useState('')
   const [stage, setStage] = useState('console')
   const [finalText, setFinalText] = useState('')
@@ -32,10 +38,10 @@ const timeoutsRef = useRef([])
   const [cardOpen, setCardOpen] = useState(false)
 const [pageIndex, setPageIndex] = useState(0)
 
+
 const addInterval = (id) => intervalsRef.current.push(id)
 const addTimeout = (id) => timeoutsRef.current.push(id)
 
-heartsRefLocal.current = []
 
 const clearAllTimers = () => {
   intervalsRef.current.forEach(clearInterval)
@@ -43,11 +49,13 @@ const clearAllTimers = () => {
   intervalsRef.current = []
   timeoutsRef.current = []
 }
-useEffect(() => {
-  return () => {
-    clearAllTimers()
-  }
-}, [stage])
+
+const photos = [
+  { src: '/photos/1.jpg', text: 'Ты 💖' },
+  { src: '/photos/2.jpg', text: 'Моменты' },
+  { src: '/photos/3.jpg', text: 'Улыбка' },
+  { src: '/photos/4.jpg', text: 'Навсегда' },
+]
 
 const cardPages = [
   {
@@ -118,6 +126,7 @@ const cardPages = [
   },
 ]
 
+
   useEffect(() => {
     if (typedText.length < START_TEXT.length) {
       const timer = setTimeout(() => {
@@ -136,7 +145,9 @@ const cardPages = [
     }
 
     const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
+    if (!canvas) return
+const ctx = canvas.getContext('2d')
+if (!ctx) return
 
     const addPoint = (t, size, cx, cy, scale, minA, maxA, maxDelay) => {
       const x = 16 * Math.sin(t) ** 3
@@ -218,12 +229,29 @@ const cardPages = [
   }, [stage])
 
   useEffect(() => {
-  if (stage !== 'slides' && stage !== 'final') return
+  if (!['photos', 'slides', 'final'].includes(stage)) return
 
-  const canvas = galaxyRef.current
+  const interval = setInterval(() => {
+    setPhotoIndex(prev => {
+      if (prev >= photos.length - 1) {
+        return 0 // зацикливаем
+      }
+      return prev + 1
+    })
+  }, 4000) // каждые 4 секунды
+
+  return () => clearInterval(interval)
+}, [stage])
+
+useEffect(() => {
+  if (stage !== 'photos') return
+
+  const canvas = photoGalaxyRef.current
+  if (!canvas) return
   const ctx = canvas.getContext('2d')
+  if (!ctx) return
 
-  let stars = []
+  let running = true
 
   const resize = () => {
     const dpr = window.devicePixelRatio || 1
@@ -233,7 +261,71 @@ const cardPages = [
     canvas.style.height = window.innerHeight + 'px'
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-    stars = Array.from({ length: 180 }, () => ({
+    photoStarsRef.current = Array.from({ length: 120 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      z: Math.random() * 2 + 0.5,
+      r: Math.random() * 1.8 + 0.4,
+      speed: 0.3 + Math.random() * 0.8,
+    }))
+  }
+
+  const draw = () => {
+    if (!running) return
+
+    ctx.fillStyle = 'rgba(5, 5, 20, 0.35)'
+    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
+
+    for (let s of photoStarsRef.current) {
+      s.y += s.speed * s.z
+      s.x += Math.sin(s.y * 0.002) * 0.4
+
+      if (s.y > window.innerHeight) {
+        s.y = 0
+        s.x = Math.random() * window.innerWidth
+      }
+
+      const alpha = 0.4 + s.z * 0.4
+
+      ctx.beginPath()
+      ctx.fillStyle = `rgba(120,180,255,${alpha})`
+      ctx.arc(s.x, s.y, s.r * s.z, 0, Math.PI * 2)
+      ctx.fill()
+    }
+
+    photoGalaxyAnim.current = requestAnimationFrame(draw)
+  }
+
+  resize()
+  photoGalaxyAnim.current = requestAnimationFrame(draw)
+  window.addEventListener('resize', resize)
+
+  return () => {
+    running = false
+    cancelAnimationFrame(photoGalaxyAnim.current)
+    window.removeEventListener('resize', resize)
+  }
+}, [stage])
+
+  useEffect(() => {
+  if (stage !== 'slides' && stage !== 'final') return
+
+  const canvas = galaxyRef.current
+  if (!canvas) return
+const ctx = canvas.getContext('2d')
+if (!ctx) return
+
+
+
+  const resize = () => {
+    const dpr = window.devicePixelRatio || 1
+    canvas.width = window.innerWidth * dpr
+    canvas.height = window.innerHeight * dpr
+    canvas.style.width = window.innerWidth + 'px'
+    canvas.style.height = window.innerHeight + 'px'
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+    starsRef.current = Array.from({ length: 180 }, () => ({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
       z: Math.random() * 2 + 0.2,
@@ -248,7 +340,7 @@ const draw = () => {
   ctx.fillStyle = 'rgba(0,0,0,0.15)'
   ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
 
-  for (let s of stars) {
+  for (let s of starsRef.current) {
     s.y += s.speed * s.z
     s.x += Math.sin(s.y * 0.002) * 0.2
 
@@ -279,18 +371,22 @@ const draw = () => {
   }
 }, [stage])
 
+useEffect(() => {
+  return () => {
+    clearAllTimers()
+  }
+}, [stage])
 
 useEffect(() => {
   if (stage !== 'slides') return
-
   const text = slides[slideIndex].text
   setSlideText('')
 
   let i = 0
 
   const interval = setInterval(() => {
-    setSlideText(text.slice(0, i))
     i++
+setSlideText(text.slice(0, i))
 
     if (i > text.length) {
       clearInterval(interval)
@@ -301,10 +397,12 @@ useEffect(() => {
 }, [stage, slideIndex])
 
   useEffect(() => {
-  if (stage !== 'slides' && stage !== 'final') return
+ if (!['slides', 'final', 'photos'].includes(stage)) return
 
   const canvas = heartsRef.current
-  const ctx = canvas.getContext('2d')
+  if (!canvas) return
+const ctx = canvas.getContext('2d')
+if (!ctx) return
 
   let running = true
   const hearts = heartsRefLocal.current
@@ -364,15 +462,17 @@ useEffect(() => {
     }
 
     ctx.globalAlpha = 1
-    requestAnimationFrame(draw)
+    heartAnimRef.current = requestAnimationFrame(draw)
   }
 
-  requestAnimationFrame(draw)
+  heartAnimRef.current = requestAnimationFrame(draw)
 
-  return () => {
-    running = false
-    window.removeEventListener('resize', resize)
-  }
+ return () => {
+  running = false
+  heartsRefLocal.current = []
+  cancelAnimationFrame(heartAnimRef.current)
+  window.removeEventListener('resize', resize)
+}
 }, [stage])
 
   useEffect(() => {
@@ -494,6 +594,7 @@ useEffect(() => {
       setStage('memory')
     }
   }
+
 const leaves = useMemo(
   () =>
     Array.from({ length: 12 }).map(() => ({
@@ -503,6 +604,9 @@ const leaves = useMemo(
     })),
   []
 )
+
+const currentSlide = slides[slideIndex] || slides[0]
+
   return (
     <main className={`app ${isReady && stage === 'console' ? 'ready' : ''}`} onClick={openHeart}>
       <audio ref={audioRef} loop>
@@ -556,7 +660,10 @@ const leaves = useMemo(
           </div>
         </section>
       )}
-<canvas ref={galaxyRef} className="galaxy-canvas" />
+{['slides', 'final', 'photos'].includes(stage) && (
+  <canvas ref={photoGalaxyRef} className="photo-galaxy" />
+)}
+
       {stage === 'reveal' && (
         <section className="reveal-screen">
           <canvas ref={canvasRef} className="heart-canvas" />
@@ -567,11 +674,47 @@ const leaves = useMemo(
         </section>
       )}
 
+      {stage === 'photos' && (
+  <section className="photo-screen">
+    
+ <canvas ref={galaxyRef} className="galaxy-canvas" />
+    <div className="photo-container">
+      <img
+        src={photos[photoIndex].src}
+        className="photo"
+      />
+
+      <p className="photo-text">
+        {photos[photoIndex].text}
+      </p>
+
+      <div className="photo-controls">
+        <button onClick={() =>
+          setPhotoIndex(p => Math.max(0, p - 1))
+        }>
+          ←
+        </button>
+
+        <span>
+          {photoIndex + 1} / {photos.length}
+        </span>
+
+        <button onClick={() =>
+          setPhotoIndex(p => Math.min(photos.length - 1, p + 1))
+        }>
+          →
+        </button>
+      </div>
+    </div>
+  </section>
+      )}
+
       {stage === 'slides' && (
         <section className="reveal-screen">
+           <canvas ref={galaxyRef} className="galaxy-canvas" />
           <canvas ref={heartsRef} className="heart-canvas" style={{ zIndex: 0 }} />
           <div className="center-message" style={{ zIndex: 2 }}>
-            <h1>{slides[slideIndex].title}</h1>
+            <h1>{currentSlide.title}</h1>
             <div className="divider" />
            <p style={{ maxWidth: 600, whiteSpace: 'pre-line' }}>
   {slideText}
@@ -582,6 +725,7 @@ const leaves = useMemo(
 
       {stage === 'final' && (
         <section className="reveal-screen">
+           <canvas ref={galaxyRef} className="galaxy-canvas" />
           <canvas ref={heartsRef} className="heart-canvas" style={{ zIndex: 0 }} />
           <div className="center-message" style={{ zIndex: 2 }}>
             <h1>💖 MESSAGE DECRYPTED</h1>
@@ -595,10 +739,11 @@ const leaves = useMemo(
 }}>
   открыть открытку
 </button>
-            <button className="reencrypt" onClick={() => setStage('slides')}>
+            <button className="reencrypt" onClick={() => setStage('photos')}>
               продолжить
             </button>
           </div>
+
         </section>
       )}
       {cardOpen && (
@@ -608,6 +753,16 @@ const leaves = useMemo(
 }}>
     <div className="card" onClick={(e) => e.stopPropagation()}>
       
+<button
+  className="card-close"
+  onClick={() => {
+    setCardOpen(false)
+    setPageIndex(0)
+  }}
+>
+  ✕
+</button>
+
       <div className="leaf-animation">
   {leaves.map((leaf, i) => (
   <span
