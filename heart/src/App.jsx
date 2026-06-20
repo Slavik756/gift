@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react'
+﻿import { useEffect, useRef, useState, useMemo  } from 'react'
 import './App.css'
 import music from './assets/music.mp3'
 
@@ -11,13 +11,15 @@ function App() {
   const startRef = useRef(0)
 
   const heartsRef = useRef(null)
-  const heartsAnim = useRef(null)
   const heartsRefLocal = useRef([])
 
   const audioRef = useRef(null)
 
   const galaxyRef = useRef(null)
 const galaxyAnim = useRef(null)
+
+const intervalsRef = useRef([])
+const timeoutsRef = useRef([])
 
   const [typedText, setTypedText] = useState('')
   const [stage, setStage] = useState('console')
@@ -26,6 +28,52 @@ const galaxyAnim = useRef(null)
 
   const [slideIndex, setSlideIndex] = useState(0)
   const [slideText, setSlideText] = useState('')
+
+  const [cardOpen, setCardOpen] = useState(false)
+const [pageIndex, setPageIndex] = useState(0)
+
+const addInterval = (id) => intervalsRef.current.push(id)
+const addTimeout = (id) => timeoutsRef.current.push(id)
+
+heartsRefLocal.current = []
+
+const clearAllTimers = () => {
+  intervalsRef.current.forEach(clearInterval)
+  timeoutsRef.current.forEach(clearTimeout)
+  intervalsRef.current = []
+  timeoutsRef.current = []
+}
+useEffect(() => {
+  return () => {
+    clearAllTimers()
+  }
+}, [stage])
+
+const cardPages = [
+  {
+    title: 'Для тебя ❤️',
+    text: `Ты — самое тёплое, что есть в моём мире.
+И эта открытка — маленькая попытка это показать.`,
+  },
+  {
+    title: 'Любовь',
+    text: `Я люблю тебя спокойно.
+Без шума. Без условий.
+Просто потому что ты — это ты.`,
+  },
+  {
+    title: 'Спасибо',
+    text: `За твой смех.
+За твоё присутствие.
+За то, что ты есть в моей жизни.`,
+  },
+  {
+    title: 'Пожелание',
+    text: `Я хочу, чтобы ты всегда чувствовала себя любимой.
+И никогда не сомневалась в своей ценности.`,
+  },
+]
+
   const slides = [
   {
     title: 'Запуск воспоминаний',
@@ -194,35 +242,34 @@ const galaxyAnim = useRef(null)
     }))
   }
 
-  const draw = () => {
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+const draw = () => {
+  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
 
-    // лёгкий тёмный космос
-    ctx.fillStyle = 'rgba(0,0,0,0.15)'
-    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
+  ctx.fillStyle = 'rgba(0,0,0,0.15)'
+  ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
 
-    for (let s of stars) {
-      s.y += s.speed * s.z
-      s.x += Math.sin(s.y * 0.002) * 0.2
+  for (let s of stars) {
+    s.y += s.speed * s.z
+    s.x += Math.sin(s.y * 0.002) * 0.2
 
-      if (s.y > window.innerHeight) {
-        s.y = 0
-        s.x = Math.random() * window.innerWidth
-      }
-
-      const alpha = 0.3 + s.z * 0.4
-
-      ctx.beginPath()
-      ctx.fillStyle = `rgba(255,255,255,${alpha})`
-      ctx.arc(s.x, s.y, s.r * s.z, 0, Math.PI * 2)
-      ctx.fill()
+    if (s.y > window.innerHeight) {
+      s.y = 0
+      s.x = Math.random() * window.innerWidth
     }
 
-    galaxyAnim.current = requestAnimationFrame(draw)
+    const alpha = 0.3 + s.z * 0.4
+
+    ctx.beginPath()
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`
+    ctx.arc(s.x, s.y, s.r * s.z, 0, Math.PI * 2)
+    ctx.fill()
   }
 
+  galaxyAnim.current = requestAnimationFrame(draw)
+}
+
   resize()
-  draw()
+  galaxyAnim.current = requestAnimationFrame(draw)
 
   window.addEventListener('resize', resize)
 
@@ -231,6 +278,7 @@ const galaxyAnim = useRef(null)
     window.removeEventListener('resize', resize)
   }
 }, [stage])
+
 
 useEffect(() => {
   if (stage !== 'slides') return
@@ -346,50 +394,53 @@ useEffect(() => {
 
 
 
-  useEffect(() => {
-    if (stage !== 'memory') return
+ useEffect(() => {
+  if (stage !== 'memory') return
 
-    const lines = [
-      'Scanning memories...',
-      'Loading first meeting...',
-      'Processing emotions...',
-      'Almost ready ❤️',
-    ]
+  const lines = [
+    'Scanning memories...',
+    'Loading first meeting...',
+    'Processing emotions...',
+    'Almost ready ❤️',
+  ]
 
-    let lineIndex = 0
-    let charIndex = 0
+  let lineIndex = 0
+  let charIndex = 0
 
-    setMemoryText('')
+  setMemoryText('')
 
-    const typeLine = () => {
-      const currentLine = lines[lineIndex]
+  const runLine = () => {
+    const line = lines[lineIndex]
 
-      if (!currentLine) {
-        setTimeout(() => setStage('reveal'), 800)
-        return
-      }
-
-      const interval = setInterval(() => {
-        setMemoryText(currentLine.slice(0, charIndex))
-        charIndex++
-
-        if (charIndex > currentLine.length) {
-          clearInterval(interval)
-
-          setTimeout(() => {
-            setMemoryText('')
-            lineIndex++
-            charIndex = 0
-            typeLine()
-          }, 1400)
-        }
-      }, 70)
+    if (!line) {
+      const t = setTimeout(() => setStage('reveal'), 800)
+      addTimeout(t)
+      return
     }
 
-    typeLine()
+    const interval = setInterval(() => {
+      setMemoryText(line.slice(0, charIndex))
+      charIndex++
 
-    return () => setMemoryText('')
-  }, [stage])
+      if (charIndex > line.length) {
+        clearInterval(interval)
+
+        const t = setTimeout(() => {
+          setMemoryText('')
+          lineIndex++
+          charIndex = 0
+          runLine()
+        }, 1400)
+
+        addTimeout(t)
+      }
+    }, 70)
+
+    addInterval(interval)
+  }
+
+  runLine()
+}, [stage])
 
   useEffect(() => {
     if (stage !== 'reveal') return
@@ -419,12 +470,17 @@ useEffect(() => {
 
     if (i >= slides.length) {
       clearInterval(interval)
-      setTimeout(() => setStage('final'), 5000)
+
+      const t = setTimeout(() => setStage('final'), 5000)
+      addTimeout(t)
+
       return
     }
 
     setSlideIndex(i)
   }, 9000)
+
+  addInterval(interval)
 
   return () => clearInterval(interval)
 }, [stage])
@@ -438,7 +494,15 @@ useEffect(() => {
       setStage('memory')
     }
   }
-
+const leaves = useMemo(
+  () =>
+    Array.from({ length: 12 }).map(() => ({
+      left: Math.random() * 100,
+      delay: Math.random() * 5,
+      size: 12 + Math.random() * 10,
+    })),
+  []
+)
   return (
     <main className={`app ${isReady && stage === 'console' ? 'ready' : ''}`} onClick={openHeart}>
       <audio ref={audioRef} loop>
@@ -525,13 +589,74 @@ useEffect(() => {
             <p style={{ color: 'rgba(255,255,255,0.7)', maxWidth: 600 }}>
               {finalText}
             </p>
-
+<button className="reencrypt" onClick={() => {
+  setPageIndex(0)
+  setCardOpen(true)
+}}>
+  открыть открытку
+</button>
             <button className="reencrypt" onClick={() => setStage('slides')}>
               продолжить
             </button>
           </div>
         </section>
       )}
+      {cardOpen && (
+  <div className="card-overlay" onClick={() => {
+  setCardOpen(false)
+  setPageIndex(0)
+}}>
+    <div className="card" onClick={(e) => e.stopPropagation()}>
+      
+      <div className="leaf-animation">
+  {leaves.map((leaf, i) => (
+  <span
+    key={i}
+    className="leaf"
+    style={{
+      left: `${leaf.left}%`,
+      animationDelay: `${leaf.delay}s`,
+      fontSize: `${leaf.size}px`,
+    }}
+  >
+    🍃
+  </span>
+))}
+</div>
+
+      <h2>{cardPages[pageIndex].title}</h2>
+
+      <p style={{ whiteSpace: 'pre-line' }}>
+        {cardPages[pageIndex].text}
+      </p>
+
+      <div className="card-controls">
+        <button
+          onClick={() =>
+            setPageIndex((p) => Math.max(0, p - 1))
+          }
+        >
+          ←
+        </button>
+
+        <span>
+          {pageIndex + 1} / {cardPages.length}
+        </span>
+
+        <button
+          onClick={() =>
+            setPageIndex((p) =>
+              Math.min(cardPages.length - 1, p + 1)
+            )
+          }
+        >
+          →
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
     </main>
   )
 }

@@ -297,6 +297,79 @@ body.cinema-fade::after {
   pointer-events: none;
   background: radial-gradient(circle at center, rgba(255,77,109,0.05), transparent 60%);
 }
+.card-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: grid;
+  place-items: center;
+  z-index: 99999;
+}
+
+.card {
+  width: min(90%, 520px);
+  padding: 28px;
+  border-radius: 18px;
+  background: rgba(15,15,15,0.95);
+  border: 1px solid rgba(255,77,109,0.25);
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: cardIn 0.5s ease;
+}
+
+@keyframes cardIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* листики */
+.leaf-animation {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.leaf {
+  position: absolute;
+  top: -20px;
+  font-size: 18px;
+  opacity: 0.6;
+  animation: fall linear infinite;
+}
+
+.leaf:nth-child(1) { left: 10%; animation-duration: 6s; }
+.leaf:nth-child(2) { left: 35%; animation-duration: 7s; }
+.leaf:nth-child(3) { left: 60%; animation-duration: 5s; }
+.leaf:nth-child(4) { left: 80%; animation-duration: 6.5s; }
+
+@keyframes fall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 0.7; }
+  100% {
+    transform: translateY(420px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+.card-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  color: rgba(255,255,255,0.6);
+}
+
+.card-controls button {
+  background: transparent;
+  border: 1px solid rgba(255,77,109,0.3);
+  color: #ff8fb1;
+  padding: 6px 12px;
+  cursor: pointer;
+}
 @media (max-width: 560px) {
   .console-screen,
   .reveal-screen { padding: 24px; }
