@@ -1,15 +1,23 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+﻿@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap");
 
 .app {
   position: relative;
   min-height: 100vh;
   width: 100%;
   overflow: hidden;
-  background: radial-gradient(circle at center, rgba(255, 77, 109, 0.06), transparent 34rem), #050505;
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255, 77, 109, 0.06),
+      transparent 34rem
+    ),
+    #050505;
   color: white;
 }
 
-.app.ready { cursor: pointer; }
+.app.ready {
+  cursor: pointer;
+}
 
 .scanline {
   position: absolute;
@@ -18,7 +26,12 @@
   z-index: 10;
   width: 100%;
   height: 100px;
-  background: linear-gradient(0deg, transparent 0%, rgba(255, 255, 255, 0.025) 50%, transparent 100%);
+  background: linear-gradient(
+    0deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.025) 50%,
+    transparent 100%
+  );
   opacity: 0.2;
   pointer-events: none;
   animation: scanline 10s linear infinite;
@@ -36,7 +49,7 @@
 .console {
   width: min(100%, 680px);
   color: rgba(255, 255, 255, 0.78);
-  font-family: 'Fira Code', ui-monospace, monospace;
+  font-family: "Fira Code", ui-monospace, monospace;
   font-size: clamp(0.86rem, 2.4vw, 1rem);
 }
 
@@ -47,8 +60,13 @@
   align-items: center;
 }
 
-.tag { color: rgba(255, 143, 177, 0.62); white-space: nowrap; }
-.status { color: #4ade80; }
+.tag {
+  color: rgba(255, 143, 177, 0.62);
+  white-space: nowrap;
+}
+.status {
+  color: #4ade80;
+}
 
 .package {
   display: grid;
@@ -72,12 +90,15 @@
   background: rgba(255, 77, 109, 0.05);
   color: #ff8fb1;
   padding: 13px 24px;
-  font-family: 'Fira Code', ui-monospace, monospace;
+  font-family: "Fira Code", ui-monospace, monospace;
   font-size: 0.74rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 220ms ease, border-color 220ms ease, transform 220ms ease;
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    transform 220ms ease;
 }
 
 .decrypt:hover {
@@ -93,8 +114,9 @@
   animation: blink 1s step-end infinite;
 }
 
-
-.reveal-screen { overflow: hidden; }
+.reveal-screen {
+  overflow: hidden;
+}
 
 .heart-canvas {
   position: fixed;
@@ -111,18 +133,22 @@
   place-items: center;
   text-align: center;
   animation: centerEnter 1500ms ease 3000ms both;
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
 }
 
 .center-message h1 {
   margin: 0;
   color: #ff4d6d;
-  font-family: 'Fira Code', ui-monospace, monospace;
+  font-family: "Fira Code", ui-monospace, monospace;
   font-size: clamp(1.1rem, 5vw, 1.35rem);
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  text-shadow: 0 0 10px rgba(255, 77, 109, 0.5), 0 0 20px rgba(255, 77, 109, 0.3);
+  text-shadow:
+    0 0 10px rgba(255, 77, 109, 0.5),
+    0 0 20px rgba(255, 77, 109, 0.3);
 }
 
 .divider {
@@ -136,7 +162,7 @@
   border: 0;
   background: transparent;
   color: rgba(255, 255, 255, 0.22);
-  font-family: 'Fira Code', ui-monospace, monospace;
+  font-family: "Fira Code", ui-monospace, monospace;
   font-size: 0.63rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -144,32 +170,49 @@
   transition: color 180ms ease;
 }
 
-.reencrypt:hover { color: rgba(255, 255, 255, 0.62); }
-
-
-
-
-
+.reencrypt:hover {
+  color: rgba(255, 255, 255, 0.62);
+}
 
 @keyframes blink {
-  from, to { border-color: transparent; }
-  50% { border-color: #ff4d6d; }
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #ff4d6d;
+  }
 }
 
 @keyframes scanline {
-  0% { bottom: 100%; }
-  100% { bottom: -100px; }
+  0% {
+    bottom: 100%;
+  }
+  100% {
+    bottom: -100px;
+  }
 }
 
 @keyframes packageEnter {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-
 @keyframes centerEnter {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 body.cinema-fade {
@@ -184,9 +227,9 @@ body.cinema-fade::before {
   inset: 0;
   background: radial-gradient(
     circle at center,
-    rgba(0,0,0,0) 0%,
-    rgba(0,0,0,0.4) 40%,
-    rgba(0,0,0,0.85) 100%
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.4) 40%,
+    rgba(0, 0, 0, 0.85) 100%
   );
   animation: fadeDark 1.2s ease forwards;
   z-index: 9999;
@@ -199,8 +242,8 @@ body.cinema-fade::after {
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(255,77,109,0.08),
-    rgba(0,0,0,0.9)
+    rgba(255, 77, 109, 0.08),
+    rgba(0, 0, 0, 0.9)
   );
   mix-blend-mode: overlay;
   animation: glowFade 1.5s ease forwards;
@@ -232,12 +275,16 @@ body.cinema-fade::after {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: radial-gradient(circle at center, rgba(255,77,109,0.05), transparent 60%);
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 77, 109, 0.05),
+    transparent 60%
+  );
 }
 .card-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.75);
+  background: rgba(0, 0, 0, 0.75);
   display: grid;
   place-items: center;
   z-index: 99999;
@@ -247,8 +294,8 @@ body.cinema-fade::after {
   width: min(90%, 520px);
   padding: 28px;
   border-radius: 18px;
-  background: rgba(15,15,15,0.95);
-  border: 1px solid rgba(255,77,109,0.25);
+  background: rgba(15, 15, 15, 0.95);
+  border: 1px solid rgba(255, 77, 109, 0.25);
   color: white;
   text-align: center;
   position: relative;
@@ -260,8 +307,14 @@ body.cinema-fade::after {
 }
 
 @keyframes cardIn {
-  from { transform: scale(0.85); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* листики */
@@ -279,17 +332,31 @@ body.cinema-fade::after {
   animation: fall linear infinite;
 }
 
-.leaf:nth-child(1) { left: 10%; animation-duration: 6s; }
-.leaf:nth-child(2) { left: 35%; animation-duration: 7s; }
-.leaf:nth-child(3) { left: 60%; animation-duration: 5s; }
-.leaf:nth-child(4) { left: 80%; animation-duration: 6.5s; }
+.leaf:nth-child(1) {
+  left: 10%;
+  animation-duration: 6s;
+}
+.leaf:nth-child(2) {
+  left: 35%;
+  animation-duration: 7s;
+}
+.leaf:nth-child(3) {
+  left: 60%;
+  animation-duration: 5s;
+}
+.leaf:nth-child(4) {
+  left: 80%;
+  animation-duration: 6.5s;
+}
 
 @keyframes fall {
   0% {
     transform: translateY(-20px) rotate(0deg);
     opacity: 0;
   }
-  10% { opacity: 0.7; }
+  10% {
+    opacity: 0.7;
+  }
   100% {
     transform: translateY(420px) rotate(180deg);
     opacity: 0;
@@ -300,7 +367,7 @@ body.cinema-fade::after {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .card-controls button {
@@ -311,7 +378,7 @@ body.cinema-fade::after {
   padding: 8px 14px;
   cursor: pointer;
 
-  font-family: 'Fira Code', monospace;
+  font-family: "Fira Code", monospace;
   font-size: 12px;
   letter-spacing: 0.12em;
 
@@ -381,16 +448,16 @@ body.cinema-fade::after {
 
   box-sizing: border-box;
 
-  font-family: 'Fira Code', monospace;
+  font-family: "Fira Code", monospace;
   font-size: 12px;
   letter-spacing: 0.25em;
 
   line-height: 1;
 
-  color: rgba(255,255,255,0.45);
+  color: rgba(255, 255, 255, 0.45);
 
-  background: rgba(0,0,0,0.25);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 
   border-radius: 8px;
 
@@ -439,6 +506,7 @@ body.cinema-fade::after {
     background: rgba(255, 77, 109, 0.05);
     border-color: rgba(255, 77, 109, 0.25);
   }
+}
 .photo-screen {
   position: relative;
   width: 100vw;
@@ -448,34 +516,20 @@ body.cinema-fade::after {
   justify-content: center;
   overflow: hidden;
 }
-
 .photo-container {
   z-index: 2;
   text-align: center;
   color: white;
   animation: fadeIn 1s ease;
 }
-
-.photo {
-  width: 320px;
-  height: 420px;
-  object-fit: cover;
-  border-radius: 18px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  transform: scale(1);
-  transition: 0.5s;
-}
-
 .photo:hover {
   transform: scale(1.03);
 }
-
 .photo-text {
   margin-top: 12px;
   opacity: 0.8;
   font-size: 16px;
 }
-
 .photo-controls {
   margin-top: 20px;
 }
@@ -494,24 +548,62 @@ body.cinema-fade::after {
   z-index: 2;
 }
 .photo {
-  width: 320px;
-  height: 420px;
+    width: 420px;
+  height: 560px;
   object-fit: cover;
   border-radius: 18px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
   opacity: 1;
 }
-
 .photo.fade {
   opacity: 0;
   transform: scale(1.03);
 }
+.photo-pair {
+  display: flex;
+  gap: 50px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+.photo {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+  will-change: opacity, transform;
+}
 
+.photo.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@keyframes photoFade {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  15% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.memory-date {
+  margin: 8px 0 16px;
+  font-size: 12px;
+  opacity: 0.5;
+  letter-spacing: 0.2em;
 }
 @media (max-width: 560px) {
-
   .console-screen,
   .reveal-screen {
     padding: 24px;
@@ -552,11 +644,19 @@ body.cinema-fade::after {
     padding: 0 12px;
   }
   .card-controls button {
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .card-close {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+.photo {
+  width: 320px;
+  height: 420px;
 }
-.card-close {
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
+.photo-pair {
+    flex-direction: column;
+    gap: 30px;
+  }
 }
