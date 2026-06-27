@@ -1,5 +1,11 @@
 ﻿@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap");
 
+/* ── Базовый размер увеличен ── */
+html {
+  font-size: 18px;
+}
+
+/* ── Основа ── */
 .app {
   position: relative;
   min-height: 100vh;
@@ -50,7 +56,7 @@
   width: min(100%, 680px);
   color: rgba(255, 255, 255, 0.78);
   font-family: "Fira Code", ui-monospace, monospace;
-  font-size: clamp(0.86rem, 2.4vw, 1rem);
+  font-size: clamp(1rem, 2.8vw, 1.2rem); /* было 0.86rem … 1rem */
 }
 
 .console-line {
@@ -91,7 +97,7 @@
   color: #ff8fb1;
   padding: 13px 24px;
   font-family: "Fira Code", ui-monospace, monospace;
-  font-size: 0.74rem;
+  font-size: 0.9rem; /* было 0.74rem */
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
@@ -142,7 +148,7 @@
   margin: 0;
   color: #ff4d6d;
   font-family: "Fira Code", ui-monospace, monospace;
-  font-size: clamp(1.1rem, 5vw, 1.35rem);
+  font-size: clamp(1.4rem, 6vw, 1.8rem); /* было 1.1rem … 1.35rem */
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -163,350 +169,175 @@
   background: transparent;
   color: rgba(255, 255, 255, 0.22);
   font-family: "Fira Code", ui-monospace, monospace;
-  font-size: 0.63rem;
+  font-size: 0.8rem; /* было 0.63rem */
   letter-spacing: 0.22em;
   text-transform: uppercase;
   cursor: pointer;
   transition: color 180ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .reencrypt:hover {
   color: rgba(255, 255, 255, 0.62);
 }
 
+.reencrypt.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.reencrypt.locked:hover {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Музыкальная панель ── */
+.music-panel {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 77, 109, 0.12);
+  padding: 6px 12px;
+  border-radius: 30px;
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+
+.music-panel:hover {
+  background: rgba(0, 0, 0, 0.55);
+  border-color: rgba(255, 77, 109, 0.25);
+}
+
+.music-toggle {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #ff8fb1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: transform 0.2s ease, text-shadow 0.2s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.music-toggle:hover {
+  transform: scale(1.15);
+  text-shadow: 0 0 8px rgba(255, 77, 109, 0.6);
+}
+
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0px;
+  height: 3px;
+  background: rgba(255, 77, 109, 0.25);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.music-panel:hover .volume-slider {
+  width: 70px;
+  opacity: 1;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff4d6d;
+  box-shadow: 0 0 6px rgba(255, 77, 109, 0.7);
+  border: none;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff4d6d;
+  box-shadow: 0 0 6px rgba(255, 77, 109, 0.7);
+  border: none;
+  cursor: pointer;
+}
+
+/* ── Анимации ── */
 @keyframes blink {
-  from,
-  to {
-    border-color: transparent;
-  }
-  50% {
-    border-color: #ff4d6d;
-  }
+  from, to { border-color: transparent; }
+  50% { border-color: #ff4d6d; }
 }
 
 @keyframes scanline {
-  0% {
-    bottom: 100%;
-  }
-  100% {
-    bottom: -100px;
-  }
+  0% { bottom: 100%; }
+  100% { bottom: -100px; }
 }
 
 @keyframes packageEnter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes centerEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
 }
 
+/* ── Cinema fade ── */
 body.cinema-fade {
   position: relative;
   overflow: hidden;
 }
-
-/* основной затемняющий слой */
 body.cinema-fade::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: radial-gradient(
-    circle at center,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.4) 40%,
-    rgba(0, 0, 0, 0.85) 100%
-  );
+  background: radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.85) 100%);
   animation: fadeDark 1.2s ease forwards;
   z-index: 9999;
 }
-
-/* лёгкий cinematic glow */
 body.cinema-fade::after {
   content: "";
   position: fixed;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 77, 109, 0.08),
-    rgba(0, 0, 0, 0.9)
-  );
+  background: linear-gradient(to bottom, rgba(255,77,109,0.08), rgba(0,0,0,0.9));
   mix-blend-mode: overlay;
   animation: glowFade 1.5s ease forwards;
   z-index: 10000;
 }
-
-/* анимации */
 @keyframes fadeDark {
-  0% {
-    opacity: 0;
-    transform: scale(1.05);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(1.05); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes glowFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes glowFade {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
+/* ── Галактический фон ── */
 .galaxy-canvas {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 77, 109, 0.05),
-    transparent 60%
-  );
-}
-.card-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  display: grid;
-  place-items: center;
-  z-index: 99999;
+  background: transparent;
 }
 
-.card {
-  width: min(90%, 520px);
-  padding: 28px;
-  border-radius: 18px;
-  background: rgba(15, 15, 15, 0.95);
-  border: 1px solid rgba(255, 77, 109, 0.25);
-  color: white;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  animation: cardIn 0.5s ease;
-  box-shadow:
-    0 0 25px rgba(255, 77, 109, 0.15),
-    0 0 60px rgba(255, 77, 109, 0.08);
-}
-
-@keyframes cardIn {
-  from {
-    transform: scale(0.85);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* листики */
-.leaf-animation {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.leaf {
-  position: absolute;
-  top: -20px;
-  font-size: 18px;
-  opacity: 0.6;
-  animation: fall linear infinite;
-}
-
-.leaf:nth-child(1) {
-  left: 10%;
-  animation-duration: 6s;
-}
-.leaf:nth-child(2) {
-  left: 35%;
-  animation-duration: 7s;
-}
-.leaf:nth-child(3) {
-  left: 60%;
-  animation-duration: 5s;
-}
-.leaf:nth-child(4) {
-  left: 80%;
-  animation-duration: 6.5s;
-}
-
-@keyframes fall {
-  0% {
-    transform: translateY(-20px) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.7;
-  }
-  100% {
-    transform: translateY(420px) rotate(180deg);
-    opacity: 0;
-  }
-}
-
-.card-controls {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.card-controls button {
-  position: relative;
-  background: rgba(255, 77, 109, 0.05);
-  border: 1px solid rgba(255, 77, 109, 0.25);
-  color: #ff8fb1;
-  padding: 8px 14px;
-  cursor: pointer;
-
-  font-family: "Fira Code", monospace;
-  font-size: 12px;
-  letter-spacing: 0.12em;
-
-  border-radius: 10px;
-  transition: all 0.25s ease;
-
-  overflow: hidden;
-  transform: translateY(0);
-}
-
-/* hover glow */
-.card-controls button:hover {
-  background: rgba(255, 77, 109, 0.12);
-  border-color: rgba(255, 77, 109, 0.55);
-  box-shadow:
-    0 0 12px rgba(255, 77, 109, 0.25),
-    0 0 24px rgba(255, 77, 109, 0.15);
-
-  transform: translateY(-2px) scale(1.03);
-}
-
-/* click effect */
-.card-controls button:active {
-  transform: translateY(0px) scale(0.97);
-  box-shadow: 0 0 8px rgba(255, 77, 109, 0.2);
-}
-
-/* subtle animated shine */
-.card-controls button::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -120%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255, 255, 255, 0.12),
-    transparent
-  );
-  transform: skewX(-20deg);
-}
-
-/* shine animation on hover */
-.card-controls button:hover::before {
-  animation: shine 0.8s ease forwards;
-}
-
-@keyframes shine {
-  from {
-    left: -120%;
-  }
-  to {
-    left: 140%;
-  }
-}
-.card-controls span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  height: 34px;
-  min-width: 70px;
-
-  padding: 0 10px;
-
-  box-sizing: border-box;
-
-  font-family: "Fira Code", monospace;
-  font-size: 12px;
-  letter-spacing: 0.25em;
-
-  line-height: 1;
-
-  color: rgba(255, 255, 255, 0.45);
-
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-
-  border-radius: 8px;
-
-  flex-shrink: 0;
-}
-.card-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-
-  width: 34px;
-  height: 34px;
-
-  border-radius: 10px;
-
-  background: rgba(255, 77, 109, 0.08);
-  border: 1px solid rgba(255, 77, 109, 0.25);
-
-  color: rgba(255, 143, 177, 0.9);
-  font-size: 16px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-
-  transition: all 0.25s ease;
-  backdrop-filter: blur(6px);
-}
-
-.card-close:hover {
-  background: rgba(255, 77, 109, 0.18);
-  transform: scale(1.08) rotate(10deg);
-  box-shadow: 0 0 14px rgba(255, 77, 109, 0.25);
-}
-
-.card-close:active {
-  transform: scale(0.95);
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .card-controls button:hover {
-    transform: none !important;
-    box-shadow: none !important;
-    background: rgba(255, 77, 109, 0.05);
-    border-color: rgba(255, 77, 109, 0.25);
-  }
-}
+/* ── Фото (адаптивные) ── */
 .photo-screen {
   position: relative;
   width: 100vw;
@@ -517,133 +348,319 @@ body.cinema-fade::after {
   overflow: hidden;
 }
 .photo-container {
+  position: relative;
   z-index: 2;
   text-align: center;
   color: white;
   animation: fadeIn 1s ease;
 }
-.photo:hover {
-  transform: scale(1.03);
+.photo-pair {
+  position: relative;
+  width: min(90vw, 800px);
+  aspect-ratio: 16 / 10;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 18px;
 }
-.photo-text {
-  margin-top: 12px;
-  opacity: 0.8;
-  font-size: 16px;
-}
-.photo-controls {
-  margin-top: 20px;
-}
-.photo-galaxy {
+.pair-wrapper {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(circle at center, #0b0f2a, #000);
-}
-.photo-container {
-  position: relative;
-  z-index: 2;
-}
-.photo {
-    width: 420px;
-  height: 560px;
-  object-fit: cover;
-  border-radius: 18px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
-  opacity: 1;
-}
-.photo.fade {
-  opacity: 0;
-  transform: scale(1.03);
-}
-.photo-pair {
   display: flex;
-  gap: 50px;
+  gap: 30px;
   align-items: center;
   justify-content: center;
-  flex-wrap: nowrap;
-}
-.photo {
   opacity: 0;
   transform: scale(0.92);
-  transition: opacity 1.2s ease, transform 1.2s ease;
+  transition: opacity 0.8s ease, transform 0.8s ease;
   will-change: opacity, transform;
+  pointer-events: none;
 }
-
-.photo.show {
+.pair-wrapper.active {
   opacity: 1;
   transform: scale(1);
+  pointer-events: auto;
 }
 
-@keyframes photoFade {
-  0% {
-    opacity: 0;
-    transform: scale(0.9);
+/* ── Мобильные: фото вертикально, без обрезки ── */
+@media (max-width: 600px) {
+  .photo-screen {
+    overflow-y: auto;
   }
-  15% {
+  .photo-pair {
+    aspect-ratio: unset;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    position: static;
+  }
+  .pair-wrapper {
+    position: static !important;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    height: auto;
     opacity: 1;
-    transform: scale(1);
+    transform: none;
+    transition: none;
+    pointer-events: auto;
   }
-  85% {
-    opacity: 1;
+  .pair-wrapper:not(.active) {
+    display: none;
   }
-  100% {
-    opacity: 0;
-  }
+}
+
+/* ── Открытка (компактная, лепестки внутри) ── */
+.card-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: grid;
+  place-items: center;
+  z-index: 99999;
+}
+.card {
+  width: min(90%, 520px);
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(15, 15, 15, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 77, 109, 0.25);
+  color: white;
+  text-align: center;
+  position: relative;
+  box-sizing: border-box;
+  animation: cardIn 0.5s ease;
+  box-shadow: 0 0 25px rgba(255, 77, 109, 0.15), 0 0 60px rgba(255, 77, 109, 0.08);
+  overflow: hidden;
+}
+@keyframes cardIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.leaf-animation {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.leaf {
+  position: absolute;
+  top: -20px;
+  font-size: 18px;
+  opacity: 0.35;
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(0,0,0,0.5);
+  animation: fall linear infinite;
+  animation-duration: 12s;
+  filter: blur(0.5px);
+}
+@keyframes fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.5; }
+  100% { transform: translateY(420px) rotate(180deg); opacity: 0; }
+}
+.card h2 {
+  font-size: 22px; /* было 18px */
+  margin-top: 0;
+  position: relative;
+  z-index: 1;
+}
+.card p {
+  font-size: 15px; /* было 13px */
+  line-height: 1.4;
+  position: relative;
+  z-index: 1;
+}
+.card-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  position: relative;
+  z-index: 1;
+}
+.card-controls button {
+  position: relative;
+  background: rgba(255, 77, 109, 0.05);
+  border: 1px solid rgba(255, 77, 109, 0.25);
+  color: #ff8fb1;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-family: "Fira Code", monospace;
+  font-size: 14px; /* было 12px */
+  letter-spacing: 0.12em;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+.card-controls button:hover {
+  background: rgba(255, 77, 109, 0.12);
+  border-color: rgba(255, 77, 109, 0.55);
+  box-shadow: 0 0 12px rgba(255, 77, 109, 0.25), 0 0 24px rgba(255, 77, 109, 0.15);
+  transform: translateY(-2px) scale(1.03);
+}
+.card-controls button:active {
+  transform: translateY(0px) scale(0.97);
+  box-shadow: 0 0 8px rgba(255, 77, 109, 0.2);
+}
+.card-controls span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  min-width: 70px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  font-family: "Fira Code", monospace;
+  font-size: 14px; /* было 12px */
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.45);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+.card-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 77, 109, 0.08);
+  border: 1px solid rgba(255, 77, 109, 0.25);
+  color: rgba(255, 143, 177, 0.9);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(6px);
+  z-index: 2;
+}
+.card-close:hover {
+  background: rgba(255, 77, 109, 0.18);
+  transform: scale(1.08) rotate(10deg);
+  box-shadow: 0 0 14px rgba(255, 77, 109, 0.25);
+}
+.card-close:active {
+  transform: scale(0.95);
 }
 .memory-date {
   margin: 8px 0 16px;
-  font-size: 12px;
+  font-size: 14px; /* было 12px */
   opacity: 0.5;
   letter-spacing: 0.2em;
 }
+/* ── Прелоадер ── */
+.progress-bar {
+  width: 220px;
+  height: 4px;
+  background: rgba(255, 77, 109, 0.15);
+  border-radius: 2px;
+  margin: 20px auto 0;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4d6d, #ff8fb1);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.2s ease;
+  box-shadow: 0 0 12px rgba(255, 77, 109, 0.6);
+}
+.preload-text {
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Поляроид (чистый тёмный стиль) ── */
+.photo-polaroid {
+  background: rgba(20, 20, 20, 0.8);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 77, 109, 0.3);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4);
+  border-radius: 2px;
+  padding: 14px 14px 44px 14px;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.photo-polaroid .photo {
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border-radius: 2px;
+  display: block;
+  margin: 0 auto;
+  filter: none;
+}
+.photo-caption {
+  margin-top: 10px;
+  font-family: "Fira Code", monospace;
+  font-size: 15px; /* было 13px */
+  color: #ffffff;
+  text-align: center;
+  white-space: pre-wrap;
+  line-height: 1.3;
+  text-shadow: 0 0 6px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 600px) {
+  .photo-polaroid {
+    margin-bottom: 24px;
+    padding: 10px 10px 34px 10px;
+  }
+  .photo-polaroid .photo {
+    max-width: 260px;
+  }
+  .photo-caption {
+    font-size: 14px; /* чуть меньше на мобильных */
+  }
+}
+
+/* ── Кастомный фон открытки (стекло + паттерн) ── */
+.pattern-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.pattern-icon {
+  position: absolute;
+  user-select: none;
+}
+
+/* ── Громкость на мобильных (раскрытие) ── */
+@media (hover: none) and (pointer: coarse) {
+  .music-panel.expanded .volume-slider {
+    width: 70px;
+    opacity: 1;
+  }
+}
+
+/* ── Адаптив ── */
 @media (max-width: 560px) {
-  .console-screen,
-  .reveal-screen {
+  .console-screen, .reveal-screen {
     padding: 24px;
   }
-
-  .console-line {
-    align-items: flex-start;
-  }
-
   .decrypt {
     width: 100%;
     justify-content: center;
     padding-inline: 16px;
   }
-
-  /* 🔥 ВОТ СЮДА card-controls */
-  .card-controls {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-
-    padding: 12px 10px;
-    flex-wrap: nowrap;
-  }
-
-  /* 🔥 И СЮДА кнопки */
   .card-controls button {
     height: 34px;
     min-width: 44px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     padding: 0 12px;
-  }
-  .card-controls button {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
@@ -651,12 +668,22 @@ body.cinema-fade::after {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
-.photo {
-  width: 320px;
-  height: 420px;
+  .music-panel {
+    right: 12px;
+    top: 12px;
+    padding: 5px 10px;
+    gap: 6px;
+  }
+  .music-toggle {
+    font-size: 18px;
+  }
 }
-.photo-pair {
-    flex-direction: column;
-    gap: 30px;
+
+@media (hover: none) and (pointer: coarse) {
+  .card-controls button:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    background: rgba(255, 77, 109, 0.05);
+    border-color: rgba(255, 77, 109, 0.25);
   }
 }
