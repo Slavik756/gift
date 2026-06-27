@@ -1,11 +1,9 @@
 ﻿@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap");
 
-/* ── Базовый размер увеличен ── */
 html {
   font-size: 18px;
 }
 
-/* ── Основа ── */
 .app {
   position: relative;
   min-height: 100vh;
@@ -20,7 +18,6 @@ html {
     #050505;
   color: white;
 }
-
 .app.ready {
   cursor: pointer;
 }
@@ -55,8 +52,8 @@ html {
 .console {
   width: min(100%, 680px);
   color: rgba(255, 255, 255, 0.78);
-  font-family: "Fira Code", ui-monospace, monospace;
-  font-size: clamp(1rem, 2.8vw, 1.2rem); /* было 0.86rem … 1rem */
+  font-family: "Fira Code", monospace;
+  font-size: clamp(1rem, 2.8vw, 1.2rem);
 }
 
 .console-line {
@@ -65,7 +62,6 @@ html {
   gap: 10px;
   align-items: center;
 }
-
 .tag {
   color: rgba(255, 143, 177, 0.62);
   white-space: nowrap;
@@ -81,7 +77,6 @@ html {
   padding-top: 46px;
   animation: packageEnter 480ms ease both;
 }
-
 .package p {
   margin: 0;
   color: rgba(255, 255, 255, 0.38);
@@ -96,8 +91,8 @@ html {
   background: rgba(255, 77, 109, 0.05);
   color: #ff8fb1;
   padding: 13px 24px;
-  font-family: "Fira Code", ui-monospace, monospace;
-  font-size: 0.9rem; /* было 0.74rem */
+  font-family: "Fira Code", monospace;
+  font-size: 0.9rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
@@ -106,7 +101,6 @@ html {
     border-color 220ms ease,
     transform 220ms ease;
 }
-
 .decrypt:hover {
   border-color: rgba(255, 77, 109, 0.58);
   background: rgba(255, 77, 109, 0.1);
@@ -123,7 +117,6 @@ html {
 .reveal-screen {
   overflow: hidden;
 }
-
 .heart-canvas {
   position: fixed;
   inset: 0;
@@ -143,12 +136,11 @@ html {
     opacity 0.8s ease,
     transform 0.8s ease;
 }
-
 .center-message h1 {
   margin: 0;
   color: #ff4d6d;
-  font-family: "Fira Code", ui-monospace, monospace;
-  font-size: clamp(1.4rem, 6vw, 1.8rem); /* было 1.1rem … 1.35rem */
+  font-family: "Fira Code", monospace;
+  font-size: clamp(1.4rem, 6vw, 1.8rem);
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -156,7 +148,6 @@ html {
     0 0 10px rgba(255, 77, 109, 0.5),
     0 0 20px rgba(255, 77, 109, 0.3);
 }
-
 .divider {
   width: 48px;
   height: 1px;
@@ -168,33 +159,28 @@ html {
   border: 0;
   background: transparent;
   color: rgba(255, 255, 255, 0.22);
-  font-family: "Fira Code", ui-monospace, monospace;
-  font-size: 0.8rem; /* было 0.63rem */
+  font-family: "Fira Code", monospace;
+  font-size: 0.8rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   cursor: pointer;
   transition: color 180ms ease;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
 }
-
 .reencrypt:hover {
   color: rgba(255, 255, 255, 0.62);
 }
-
 .reencrypt.locked {
   opacity: 0.5;
   cursor: not-allowed;
   color: rgba(255, 255, 255, 0.2);
 }
-
 .reencrypt.locked:hover {
   color: rgba(255, 255, 255, 0.2);
 }
 
-/* ── Музыкальная панель ── */
 .music-panel {
   position: fixed;
   right: 20px;
@@ -211,12 +197,10 @@ html {
   transition: all 0.25s ease;
   overflow: hidden;
 }
-
 .music-panel:hover {
   background: rgba(0, 0, 0, 0.55);
   border-color: rgba(255, 77, 109, 0.25);
 }
-
 .music-toggle {
   background: transparent;
   border: none;
@@ -227,16 +211,16 @@ html {
   align-items: center;
   justify-content: center;
   padding: 4px;
-  transition: transform 0.2s ease, text-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    text-shadow 0.2s ease;
   outline: none;
   -webkit-tap-highlight-color: transparent;
 }
-
 .music-toggle:hover {
   transform: scale(1.15);
   text-shadow: 0 0 8px rgba(255, 77, 109, 0.6);
 }
-
 .volume-slider {
   -webkit-appearance: none;
   appearance: none;
@@ -246,15 +230,15 @@ html {
   border-radius: 2px;
   outline: none;
   cursor: pointer;
-  transition: width 0.3s ease, opacity 0.3s ease;
+  transition:
+    width 0.3s ease,
+    opacity 0.3s ease;
   opacity: 0;
 }
-
 .music-panel:hover .volume-slider {
   width: 70px;
   opacity: 1;
 }
-
 .volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 12px;
@@ -265,7 +249,6 @@ html {
   border: none;
   cursor: pointer;
 }
-
 .volume-slider::-moz-range-thumb {
   width: 12px;
   height: 12px;
@@ -276,28 +259,40 @@ html {
   cursor: pointer;
 }
 
-/* ── Анимации ── */
 @keyframes blink {
-  from, to { border-color: transparent; }
-  50% { border-color: #ff4d6d; }
+  50% {
+    border-color: transparent;
+  }
 }
-
 @keyframes scanline {
-  0% { bottom: 100%; }
-  100% { bottom: -100px; }
+  0% {
+    bottom: 100%;
+  }
+  100% {
+    bottom: -100px;
+  }
 }
-
 @keyframes packageEnter {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
 @keyframes centerEnter {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-/* ── Cinema fade ── */
 body.cinema-fade {
   position: relative;
   overflow: hidden;
@@ -306,7 +301,12 @@ body.cinema-fade::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.85) 100%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.4) 40%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
   animation: fadeDark 1.2s ease forwards;
   z-index: 9999;
 }
@@ -314,21 +314,34 @@ body.cinema-fade::after {
   content: "";
   position: fixed;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(255,77,109,0.08), rgba(0,0,0,0.9));
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 77, 109, 0.08),
+    rgba(0, 0, 0, 0.9)
+  );
   mix-blend-mode: overlay;
   animation: glowFade 1.5s ease forwards;
   z-index: 10000;
 }
 @keyframes fadeDark {
-  from { opacity: 0; transform: scale(1.05); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 @keyframes glowFade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* ── Галактический фон ── */
 .galaxy-canvas {
   position: fixed;
   inset: 0;
@@ -337,7 +350,6 @@ body.cinema-fade::after {
   background: transparent;
 }
 
-/* ── Фото (адаптивные) ── */
 .photo-screen {
   position: relative;
   width: 100vw;
@@ -357,7 +369,7 @@ body.cinema-fade::after {
 .photo-pair {
   position: relative;
   width: min(90vw, 800px);
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16/10;
   margin: 0 auto;
   overflow: hidden;
   border-radius: 18px;
@@ -374,8 +386,9 @@ body.cinema-fade::after {
   justify-content: center;
   opacity: 0;
   transform: scale(0.92);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-  will-change: opacity, transform;
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
   pointer-events: none;
 }
 .pair-wrapper.active {
@@ -384,7 +397,6 @@ body.cinema-fade::after {
   pointer-events: auto;
 }
 
-/* ── Мобильные: фото вертикально, без обрезки ── */
 @media (max-width: 600px) {
   .photo-screen {
     overflow-y: auto;
@@ -412,7 +424,6 @@ body.cinema-fade::after {
   }
 }
 
-/* ── Открытка (компактная, лепестки внутри) ── */
 .card-overlay {
   position: fixed;
   inset: 0;
@@ -427,20 +438,39 @@ body.cinema-fade::after {
   border-radius: 18px;
   background: rgba(15, 15, 15, 0.6);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 77, 109, 0.25);
   color: white;
   text-align: center;
   position: relative;
   box-sizing: border-box;
   animation: cardIn 0.5s ease;
-  box-shadow: 0 0 25px rgba(255, 77, 109, 0.15), 0 0 60px rgba(255, 77, 109, 0.08);
+  box-shadow:
+    0 0 25px rgba(255, 77, 109, 0.15),
+    0 0 60px rgba(255, 77, 109, 0.08);
   overflow: hidden;
 }
 @keyframes cardIn {
-  from { transform: scale(0.85); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
+
+.pattern-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.pattern-icon {
+  position: absolute;
+  user-select: none;
+}
+
 .leaf-animation {
   position: absolute;
   inset: 0;
@@ -452,25 +482,33 @@ body.cinema-fade::after {
   top: -20px;
   font-size: 18px;
   opacity: 0.35;
-  color: #ffffff;
-  text-shadow: 0 0 6px rgba(0,0,0,0.5);
+  color: #fff;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
   animation: fall linear infinite;
-  animation-duration: 12s;
   filter: blur(0.5px);
 }
 @keyframes fall {
-  0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.5; }
-  100% { transform: translateY(420px) rotate(180deg); opacity: 0; }
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(420px) rotate(180deg);
+    opacity: 0;
+  }
 }
+
 .card h2 {
-  font-size: 22px; /* было 18px */
+  font-size: 22px;
   margin-top: 0;
   position: relative;
   z-index: 1;
 }
 .card p {
-  font-size: 15px; /* было 13px */
+  font-size: 15px;
   line-height: 1.4;
   position: relative;
   z-index: 1;
@@ -484,28 +522,22 @@ body.cinema-fade::after {
   z-index: 1;
 }
 .card-controls button {
-  position: relative;
   background: rgba(255, 77, 109, 0.05);
   border: 1px solid rgba(255, 77, 109, 0.25);
   color: #ff8fb1;
   padding: 8px 14px;
   cursor: pointer;
   font-family: "Fira Code", monospace;
-  font-size: 14px; /* было 12px */
+  font-size: 14px;
   letter-spacing: 0.12em;
   border-radius: 10px;
   transition: all 0.25s ease;
-  overflow: hidden;
 }
 .card-controls button:hover {
   background: rgba(255, 77, 109, 0.12);
   border-color: rgba(255, 77, 109, 0.55);
-  box-shadow: 0 0 12px rgba(255, 77, 109, 0.25), 0 0 24px rgba(255, 77, 109, 0.15);
+  box-shadow: 0 0 12px rgba(255, 77, 109, 0.25);
   transform: translateY(-2px) scale(1.03);
-}
-.card-controls button:active {
-  transform: translateY(0px) scale(0.97);
-  box-shadow: 0 0 8px rgba(255, 77, 109, 0.2);
 }
 .card-controls span {
   display: flex;
@@ -516,7 +548,7 @@ body.cinema-fade::after {
   padding: 0 10px;
   box-sizing: border-box;
   font-family: "Fira Code", monospace;
-  font-size: 14px; /* было 12px */
+  font-size: 14px;
   letter-spacing: 0.25em;
   color: rgba(255, 255, 255, 0.45);
   background: rgba(0, 0, 0, 0.25);
@@ -538,25 +570,21 @@ body.cinema-fade::after {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.25s ease;
   backdrop-filter: blur(6px);
   z-index: 2;
+  transition: all 0.25s ease;
 }
 .card-close:hover {
   background: rgba(255, 77, 109, 0.18);
   transform: scale(1.08) rotate(10deg);
-  box-shadow: 0 0 14px rgba(255, 77, 109, 0.25);
-}
-.card-close:active {
-  transform: scale(0.95);
 }
 .memory-date {
   margin: 8px 0 16px;
-  font-size: 14px; /* было 12px */
+  font-size: 14px;
   opacity: 0.5;
   letter-spacing: 0.2em;
 }
-/* ── Прелоадер ── */
+
 .progress-bar {
   width: 220px;
   height: 4px;
@@ -577,20 +605,23 @@ body.cinema-fade::after {
   animation: pulse 2s infinite;
 }
 @keyframes pulse {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
-/* ── Поляроид (чистый тёмный стиль) ── */
 .photo-polaroid {
   background: rgba(20, 20, 20, 0.8);
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 77, 109, 0.3);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
   border-radius: 2px;
   padding: 14px 14px 44px 14px;
   display: inline-block;
-  transition: transform 0.3s ease;
 }
 .photo-polaroid .photo {
   width: 100%;
@@ -600,56 +631,43 @@ body.cinema-fade::after {
   border-radius: 2px;
   display: block;
   margin: 0 auto;
-  filter: none;
 }
 .photo-caption {
   margin-top: 10px;
   font-family: "Fira Code", monospace;
-  font-size: 15px; /* было 13px */
-  color: #ffffff;
+  font-size: 15px;
+  color: #fff;
   text-align: center;
   white-space: pre-wrap;
-  line-height: 1.3;
-  text-shadow: 0 0 6px rgba(0,0,0,0.5);
 }
 
-@media (max-width: 600px) {
-  .photo-polaroid {
-    margin-bottom: 24px;
-    padding: 10px 10px 34px 10px;
-  }
-  .photo-polaroid .photo {
-    max-width: 260px;
-  }
-  .photo-caption {
-    font-size: 14px; /* чуть меньше на мобильных */
-  }
+.share-btn {
+  background: rgba(255, 77, 109, 0.12);
+  border: 1px solid rgba(255, 77, 109, 0.45);
+  color: #ff8fb1;
+  padding: 10px 24px;
+  font-size: 0.85rem;
+  font-family: "Fira Code", monospace;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.share-btn:hover {
+  background: rgba(255, 77, 109, 0.2);
+  border-color: rgba(255, 77, 109, 0.7);
+  box-shadow: 0 0 14px rgba(255, 77, 109, 0.3);
+  transform: translateY(-2px);
 }
 
-/* ── Кастомный фон открытки (стекло + паттерн) ── */
-.pattern-bg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-}
-.pattern-icon {
-  position: absolute;
-  user-select: none;
-}
-
-/* ── Громкость на мобильных (раскрытие) ── */
-@media (hover: none) and (pointer: coarse) {
-  .music-panel.expanded .volume-slider {
-    width: 70px;
-    opacity: 1;
-  }
-}
-
-/* ── Адаптив ── */
 @media (max-width: 560px) {
-  .console-screen, .reveal-screen {
+  .console-screen,
+  .reveal-screen {
     padding: 24px;
   }
   .decrypt {
@@ -661,12 +679,6 @@ body.cinema-fade::after {
     height: 34px;
     min-width: 44px;
     padding: 0 12px;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-  }
-  .card-close {
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
   }
   .music-panel {
     right: 12px;
@@ -679,11 +691,57 @@ body.cinema-fade::after {
   }
 }
 
+@media (max-width: 600px) {
+  html {
+    font-size: 18px;
+  }
+  .console {
+    font-size: 0.75rem;
+  }
+  .decrypt {
+    font-size: 0.8rem;
+  }
+  .preload-text,
+  .memory-date {
+    font-size: 0.7rem;
+  }
+  .center-message h1 {
+    font-size: 1.4rem;
+  }
+  .center-message p,
+  .reveal-screen p {
+    font-size: 0.95rem;
+  }
+  .photo-caption {
+    font-size: 1rem;
+  }
+  .card h2 {
+    font-size: 1.3rem;
+  }
+  .card p {
+    font-size: 0.95rem;
+  }
+  .reencrypt {
+    font-size: 0.8rem;
+  }
+  .share-btn {
+    font-size: 0.9rem;
+    padding: 12px 28px;
+  }
+}
+
 @media (hover: none) and (pointer: coarse) {
   .card-controls button:hover {
     transform: none !important;
     box-shadow: none !important;
     background: rgba(255, 77, 109, 0.05);
-    border-color: rgba(255, 77, 109, 0.25);
+  }
+  .share-btn:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .music-panel.expanded .volume-slider {
+    width: 70px;
+    opacity: 1;
   }
 }

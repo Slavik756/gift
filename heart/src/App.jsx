@@ -1,5 +1,6 @@
-﻿ import { useEffect, useRef, useState, useCallback } from "react";
+﻿import { useEffect, useRef, useState, useCallback } from "react";
 import "./App.css";
+import toast, { Toaster } from "react-hot-toast";
 import music from "./assets/music/music.mp3";
 
 import img1 from "./assets/photos/1.jpg";
@@ -143,68 +144,99 @@ function App() {
   const [panelExpanded, setPanelExpanded] = useState(false);
   const hidePanelTimer = useRef(null);
 
-  // Узор для открытки
-  const [patternIcons] = useState(() =>
-    Array.from({ length: 35 }).map(() => ({
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      size: 10 + Math.random() * 18,
-      rotation: Math.random() * 360,
-      opacity: 0.07 + Math.random() * 0.09,
-      emoji: Math.random() < 0.5 ? "❤️" : "🌸",
-    }))
-  );
+  const realProgressRef = useRef(0);
+  const loadingProgressRef = useRef(0); // только для чтения в эффектах
 
-  // Случайные наклоны поляроидов
+  // Синхронизация рефа со стейтом (вне рендера)
+  useEffect(() => {
+    loadingProgressRef.current = loadingProgress;
+  }, [loadingProgress]);
+
   const [polaroidTilts] = useState(() =>
-    photos.map(() => (Math.random() - 0.5) * 6)
+    photos.map(() => (Math.random() - 0.5) * 6),
   );
 
-  // Листья для открытки (яркие и заметные)
+  const [patternIcons] = useState(() =>
+    Array.from({ length: 60 }).map(() => ({
+      left: 5 + Math.random() * 90,
+      top: 5 + Math.random() * 90,
+      size: 12 + Math.random() * 16,
+      rotation: Math.random() * 360,
+      opacity: 0.06 + Math.random() * 0.1,
+      emoji: Math.random() < 0.5 ? "❤️" : "🌸",
+    })),
+  );
+
   const [leaves] = useState(() =>
     Array.from({ length: 25 }).map(() => ({
       left: Math.random() * 100,
       delay: Math.random() * 7,
       size: 14 + Math.random() * 12,
       duration: 6 + Math.random() * 6,
-    }))
+    })),
   );
 
   const isMuted = volume === 0;
   const totalPairs = photoPairs.length;
 
-  // ===== Прелоадер с плавным прогрессом =====
+  const shareUrl = "https://gift-chi-five.vercel.app/";
+  const shareText = "Посмотри, что мне сделали ❤️";
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "You my heart ❤️",
+          text: shareText,
+          url: shareUrl,
+        });
+        toast.success("Спасибо, что поделился! 💖", {
+          style: {
+            background: "rgba(255, 77, 109, 0.15)",
+            color: "#ff8fb1",
+            border: "1px solid rgba(255, 77, 109, 0.4)",
+            backdropFilter: "blur(8px)",
+          },
+          iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
+        });
+      } catch {
+        // пользователь отменил
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Ссылка скопирована! 🔗", {
+          style: {
+            background: "rgba(255, 77, 109, 0.15)",
+            color: "#ff8fb1",
+            border: "1px solid rgba(255, 77, 109, 0.4)",
+            backdropFilter: "blur(8px)",
+          },
+          iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
+        });
+      } catch {
+        toast.error("Не удалось скопировать ссылку");
+      }
+    }
+  };
+
+  // ===== Прелоадер (исправлена ошибка с рефом) =====
   useEffect(() => {
     const resources = photos.map((p) => p.src);
     resources.push(music);
-    let loadedCount = 0;
     const total = resources.length;
-    let realProgress = 0;
+    let loadedCount = 0;
     let animFrame = null;
-
-    const smoothProgress = () => {
-      if (loadingProgress < realProgress) {
-        setLoadingProgress((prev) => {
-          const next = Math.min(prev + 1, realProgress);
-          return next;
-        });
-      }
-      if (loadingProgress < 100) {
-        animFrame = requestAnimationFrame(smoothProgress);
-      }
-    };
-
-    animFrame = requestAnimationFrame(smoothProgress);
 
     const updateRealProgress = () => {
       loadedCount++;
-      realProgress = Math.round((loadedCount / total) * 100);
+      realProgressRef.current = Math.round((loadedCount / total) * 100);
+
       if (loadedCount === total) {
         const startTime = Date.now();
         const minDelay = 3500;
         const tryFinish = () => {
-          const elapsed = Date.now() - startTime;
-          if (realProgress >= 100 && elapsed >= minDelay) {
+          if (Date.now() - startTime >= minDelay) {
             setTimeout(() => setStage("console"), 300);
           } else {
             requestAnimationFrame(tryFinish);
@@ -214,40 +246,53 @@ function App() {
       }
     };
 
-    resources.forEach((src, idx) => {
-      if (idx === resources.length - 1) {
-        const audio = new Audio();
-        audio.src = src;
-        audio.addEventListener("canplaythrough", updateRealProgress, { once: true });
-        audio.load();
-        setTimeout(() => {
-          if (!audio.readyState) updateRealProgress();
-        }, 5000);
-      } else {
-        const img = new Image();
-        img.onload = updateRealProgress;
-        img.onerror = updateRealProgress;
-        img.src = src;
+    const animate = () => {
+      setLoadingProgress((prev) => {
+        if (prev < realProgressRef.current) {
+          return Math.min(prev + 1, realProgressRef.current);
+        }
+        return prev;
+      });
+      // Продолжаем, пока отображаемый прогресс не достиг 100
+      if (loadingProgressRef.current < 100) {
+        animFrame = requestAnimationFrame(animate);
       }
+    };
+    animFrame = requestAnimationFrame(animate);
+
+    photos.forEach((photo) => {
+      const img = new Image();
+      img.onload = updateRealProgress;
+      img.onerror = updateRealProgress;
+      img.src = photo.src;
     });
+
+    const audio = new Audio();
+    audio.src = music;
+    audio.addEventListener("canplaythrough", updateRealProgress, {
+      once: true,
+    });
+    audio.addEventListener("error", updateRealProgress, { once: true });
+    audio.load();
+    setTimeout(() => {
+      if (!audio.readyState || audio.readyState < 2) {
+        updateRealProgress();
+      }
+    }, 5000);
 
     return () => {
       if (animFrame) cancelAnimationFrame(animFrame);
     };
   }, []);
 
-  // Громкость
   useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) audio.volume = volume;
+    if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
     if (volume === 0 && musicPlaying) {
       const timer = setTimeout(() => {
-        audio.pause();
+        audioRef.current?.pause();
         setMusicPlaying(false);
       }, 0);
       return () => clearTimeout(timer);
@@ -262,7 +307,10 @@ function App() {
       audio.loop = true;
     }
     audio.volume = volume;
-    audio.play().then(() => setMusicPlaying(true)).catch(() => {});
+    audio
+      .play()
+      .then(() => setMusicPlaying(true))
+      .catch(() => {});
   }, [volume]);
 
   const toggleMusic = useCallback(() => {
@@ -277,7 +325,10 @@ function App() {
       const newVolume = lastVolumeRef.current || 0.25;
       setVolume(newVolume);
       audio.volume = newVolume;
-      audio.play().then(() => setMusicPlaying(true)).catch(() => {});
+      audio
+        .play()
+        .then(() => setMusicPlaying(true))
+        .catch(() => {});
     }
   }, [volume]);
 
@@ -285,12 +336,9 @@ function App() {
     e.stopPropagation();
     const newVolume = Number(e.target.value);
     setVolume(newVolume);
-    if (newVolume > 0 && !musicPlaying) {
-      playMusic();
-    }
+    if (newVolume > 0 && !musicPlaying) playMusic();
   };
 
-  // Автоматическое скрытие панели громкости (4 секунды)
   const scheduleHidePanel = () => {
     if (hidePanelTimer.current) clearTimeout(hidePanelTimer.current);
     hidePanelTimer.current = setTimeout(() => setPanelExpanded(false), 4000);
@@ -301,37 +349,34 @@ function App() {
     if (window.innerWidth <= 600) {
       setPanelExpanded((prev) => {
         if (!prev) scheduleHidePanel();
-        else if (hidePanelTimer.current) clearTimeout(hidePanelTimer.current);
+        else clearTimeout(hidePanelTimer.current);
         return !prev;
       });
     }
     toggleMusic();
   };
 
-  // Консольный ввод
   useEffect(() => {
     if (stage !== "console") return;
     if (typedText.length < START_TEXT.length) {
-      const timer = setTimeout(() => {
-        setTypedText(START_TEXT.slice(0, typedText.length + 1));
-      }, 90);
+      const timer = setTimeout(
+        () => setTypedText(START_TEXT.slice(0, typedText.length + 1)),
+        90,
+      );
       return () => clearTimeout(timer);
     }
   }, [typedText, stage]);
 
   const isReady = typedText.length === START_TEXT.length;
 
-  // reveal: сердечко "i love you"
+  // Сердечко из "i love you"
   useEffect(() => {
     if (stage !== "reveal") return;
-
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animationId;
-    let running = true;
+    let animationId,
+      running = true;
 
     function draw(time) {
       if (!running) return;
@@ -339,17 +384,12 @@ function App() {
       const elapsed = time - startRef.current;
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       ctx.font = "14px Fira Code, monospace";
-
       pointsRef.current.forEach((p) => {
-        if (elapsed > p.delay) {
-          p.alpha += (p.targetAlpha - p.alpha) * 0.02;
-        }
-        const text = "i love you";
+        if (elapsed > p.delay) p.alpha += (p.targetAlpha - p.alpha) * 0.02;
         ctx.fillStyle = `rgba(255,77,109,${p.alpha})`;
-        const w = ctx.measureText(text).width;
-        ctx.fillText(text, p.x - w / 2, p.y);
+        const w = ctx.measureText("i love you").width;
+        ctx.fillText("i love you", p.x - w / 2, p.y);
       });
-
       animationId = requestAnimationFrame(draw);
     }
 
@@ -383,36 +423,26 @@ function App() {
 
     const init = () => {
       if (animationId) cancelAnimationFrame(animationId);
-
       const ratio = window.devicePixelRatio || 1;
       canvas.width = window.innerWidth * ratio;
       canvas.height = window.innerHeight * ratio;
       canvas.style.width = window.innerWidth + "px";
       canvas.style.height = window.innerHeight + "px";
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-
       pointsRef.current = [];
       startRef.current = 0;
-
-      const cx = window.innerWidth / 2;
-      const cy = window.innerHeight / 2;
+      const cx = window.innerWidth / 2,
+        cy = window.innerHeight / 2;
       const scale = Math.min(window.innerWidth, window.innerHeight) / 45;
-
-      for (let t = 0; t < Math.PI * 2; t += 0.05) {
+      for (let t = 0; t < Math.PI * 2; t += 0.05)
         addPoint(t, 1, cx, cy, scale, 0.8, 1, 2000);
-      }
-      for (let s = 0.2; s < 1; s += 0.2) {
-        for (let t = 0; t < Math.PI * 2; t += 0.1) {
+      for (let s = 0.2; s < 1; s += 0.2)
+        for (let t = 0; t < Math.PI * 2; t += 0.1)
           addPoint(t, s, cx, cy, scale, 0.3, 0.8, 3000);
-        }
-      }
-
       animationId = requestAnimationFrame(draw);
     };
-
     init();
     window.addEventListener("resize", init);
-
     return () => {
       running = false;
       cancelAnimationFrame(animationId);
@@ -421,16 +451,15 @@ function App() {
     };
   }, [stage]);
 
-  // Автоматическое переключение пар фото
   useEffect(() => {
     if (stage !== "photos") return;
-    const interval = setInterval(() => {
-      setActivePair((prev) => (prev + 1) % totalPairs);
-    }, 6000);
+    const interval = setInterval(
+      () => setActivePair((prev) => (prev + 1) % totalPairs),
+      6000,
+    );
     return () => clearInterval(interval);
   }, [stage, totalPairs]);
 
-  // Завершение фото
   useEffect(() => {
     if (stage !== "photos") return;
     const timer = setTimeout(() => setStage("end"), photos.length * 3000);
@@ -440,22 +469,19 @@ function App() {
   // Галактический фон
   useEffect(() => {
     if (!["slides", "final", "end", "photos"].includes(stage)) return;
-
     const canvas = galaxyRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animId;
-    let running = true;
-    let lastTime = 0;
-    const fps = 30;
-    const interval = 1000 / fps;
+    let animId,
+      running = true,
+      lastTime = 0;
+    const fps = 30,
+      interval = 1000 / fps;
 
     const handleVisibility = () => {
       if (document.hidden) {
         running = false;
-        if (animId) cancelAnimationFrame(animId);
+        cancelAnimationFrame(animId);
       } else {
         running = true;
         lastTime = 0;
@@ -471,7 +497,6 @@ function App() {
       canvas.style.width = window.innerWidth + "px";
       canvas.style.height = window.innerHeight + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
       starsRef.current = Array.from({ length: 100 }, () => ({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
@@ -484,15 +509,11 @@ function App() {
     function draw(now) {
       if (!running) return;
       animId = requestAnimationFrame(draw);
-
-      const delta = now - lastTime;
-      if (delta < interval) return;
-      lastTime = now - (delta % interval);
-
+      if (now - lastTime < interval) return;
+      lastTime = now - (now % interval);
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       ctx.fillStyle = "rgba(0,0,0,0.15)";
       ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-
       for (let s of starsRef.current) {
         s.y += s.speed * s.z;
         s.x += Math.sin(s.y * 0.002) * 0.2;
@@ -500,9 +521,8 @@ function App() {
           s.y = 0;
           s.x = Math.random() * window.innerWidth;
         }
-        const alpha = 0.3 + s.z * 0.4;
         ctx.beginPath();
-        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+        ctx.fillStyle = `rgba(255,255,255,${0.3 + s.z * 0.4})`;
         ctx.arc(s.x, s.y, s.r * s.z, 0, Math.PI * 2);
         ctx.fill();
       }
@@ -511,7 +531,6 @@ function App() {
     resize();
     animId = requestAnimationFrame(draw);
     window.addEventListener("resize", resize);
-
     return () => {
       running = false;
       cancelAnimationFrame(animId);
@@ -520,66 +539,45 @@ function App() {
     };
   }, [stage]);
 
-  // Печать текста слайдов
+  // Слайды
   useEffect(() => {
     if (stage !== "slides") return;
-    const slide = slides?.[slideIndex];
-    if (!slide || !slide.text) return;
-
-    const initTimer = setTimeout(() => setSlideText(""), 0);
+    const slide = slides[slideIndex];
+    if (!slide?.text) return;
+    setTimeout(() => setSlideText(""), 0);
     let i = 0;
     const interval = setInterval(() => {
       i++;
       setSlideText(slide.text.slice(0, i));
-      if (i >= slide.text.length) {
-        clearInterval(interval);
-      }
+      if (i >= slide.text.length) clearInterval(interval);
     }, 40);
-
-    return () => {
-      clearTimeout(initTimer);
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [stage, slideIndex]);
 
-  // Переключение слайда после завершения печати
   useEffect(() => {
     if (stage !== "slides") return;
-    const currentSlideText = slides[slideIndex]?.text;
-    if (!currentSlideText || slideText !== currentSlideText) return;
-
+    const currentText = slides[slideIndex]?.text;
+    if (!currentText || slideText !== currentText) return;
     const timeout = setTimeout(() => {
-      if (slideIndex < slides.length - 1) {
-        setSlideIndex((prev) => prev + 1);
-      } else {
-        setStage("final");
-      }
+      if (slideIndex < slides.length - 1) setSlideIndex((prev) => prev + 1);
+      else setStage("final");
     }, 6000);
-
     return () => clearTimeout(timeout);
   }, [stage, slideIndex, slideText]);
 
-  // Сердечки
+  // Падающие сердечки
   useEffect(() => {
     if (!["slides", "final", "end"].includes(stage)) return;
-
     const canvas = heartsRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let running = true;
+    let running = true,
+      animId,
+      lastTime = 0;
     const hearts = heartsRefLocal.current;
     hearts.length = 0;
-
-    const MAX_HEARTS = 50;
-    let animId;
-    let lastTime = 0;
-    const fps = 30;
-    const interval = 1000 / fps;
-
     const spawnInterval = setInterval(() => {
-      if (!running || hearts.length >= MAX_HEARTS) return;
+      if (!running || hearts.length >= 50) return;
       hearts.push({
         x: Math.random() * window.innerWidth,
         y: -20,
@@ -593,7 +591,7 @@ function App() {
     const handleVisibility = () => {
       if (document.hidden) {
         running = false;
-        if (animId) cancelAnimationFrame(animId);
+        cancelAnimationFrame(animId);
       } else {
         running = true;
         lastTime = 0;
@@ -614,13 +612,9 @@ function App() {
     function draw(now) {
       if (!running) return;
       animId = requestAnimationFrame(draw);
-
-      const delta = now - lastTime;
-      if (delta < interval) return;
-      lastTime = now - (delta % interval);
-
+      if (now - lastTime < 33) return;
+      lastTime = now - (now % 33);
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
       for (let i = hearts.length - 1; i >= 0; i--) {
         const h = hearts[i];
         h.y += h.speed;
@@ -629,9 +623,7 @@ function App() {
         ctx.globalAlpha = h.alpha;
         ctx.font = `${h.size}px Arial`;
         ctx.fillText("❤️", h.x, h.y);
-        if (h.alpha <= 0 || h.y > window.innerHeight + 50) {
-          hearts.splice(i, 1);
-        }
+        if (h.alpha <= 0 || h.y > window.innerHeight + 50) hearts.splice(i, 1);
       }
       ctx.globalAlpha = 1;
     }
@@ -639,7 +631,6 @@ function App() {
     resize();
     animId = requestAnimationFrame(draw);
     window.addEventListener("resize", resize);
-
     return () => {
       running = false;
       clearInterval(spawnInterval);
@@ -649,32 +640,22 @@ function App() {
     };
   }, [stage]);
 
-  // Финальный текст
   useEffect(() => {
     if (stage !== "final") return;
-
-    const initTimer = setTimeout(() => setFinalText(""), 0);
-    const text = "Я люблю тебя. Спасибо, что ты есть ❤️";
+    const fullText = "Я люблю тебя. Спасибо, что ты есть ❤️";
+    setTimeout(() => setFinalText(""), 0);
     let i = 0;
-
     const interval = setInterval(() => {
-      setFinalText(text.slice(0, i));
+      setFinalText(fullText.slice(0, i));
       i++;
-      if (i > text.length) clearInterval(interval);
+      if (i > fullText.length) clearInterval(interval);
     }, 50);
-
-    return () => {
-      clearTimeout(initTimer);
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [stage]);
 
-  // memory
   useEffect(() => {
     if (stage !== "memory") return;
-
-    const initTimer = setTimeout(() => setMemoryText(""), 0);
-
+    setTimeout(() => setMemoryText(""), 0);
     const lines = [
       "Scanning memories...",
       "Loading first meeting...",
@@ -682,69 +663,60 @@ function App() {
       "Syncing shared memories...",
       "Almost ready ❤️",
     ];
-
-    let lineIndex = 0;
-    let charIndex = 0;
-    const localIntervals = [];
-    const localTimeouts = [];
-    let cancelled = false;
-
+    let lineIndex = 0,
+      charIndex = 0,
+      cancelled = false;
+    const intervals = [],
+      timeouts = [];
     const runLine = () => {
       if (cancelled) return;
       const line = lines[lineIndex];
       if (!line) {
-        const t = setTimeout(() => {
-          if (!cancelled) setStage("reveal");
-        }, 800);
-        localTimeouts.push(t);
+        timeouts.push(
+          setTimeout(() => {
+            if (!cancelled) setStage("reveal");
+          }, 800),
+        );
         return;
       }
-
-      const interval = setInterval(() => {
-        if (cancelled) {
-          clearInterval(interval);
-          return;
-        }
-        setMemoryText(line.slice(0, charIndex));
-        charIndex++;
-        if (charIndex > line.length) {
-          clearInterval(interval);
-          const t = setTimeout(() => {
-            if (cancelled) return;
-            setMemoryText("");
-            lineIndex++;
-            charIndex = 0;
-            runLine();
-          }, 1400);
-          localTimeouts.push(t);
-        }
-      }, 110);
-      localIntervals.push(interval);
+      intervals.push(
+        setInterval(() => {
+          if (cancelled) return;
+          setMemoryText(line.slice(0, charIndex));
+          charIndex++;
+          if (charIndex > line.length) {
+            clearInterval(intervals[intervals.length - 1]);
+            timeouts.push(
+              setTimeout(() => {
+                if (cancelled) return;
+                setMemoryText("");
+                lineIndex++;
+                charIndex = 0;
+                runLine();
+              }, 1400),
+            );
+          }
+        }, 110),
+      );
     };
-
     runLine();
-
     return () => {
       cancelled = true;
-      clearTimeout(initTimer);
-      localIntervals.forEach(clearInterval);
-      localTimeouts.forEach(clearTimeout);
+      intervals.forEach(clearInterval);
+      timeouts.forEach(clearTimeout);
     };
   }, [stage]);
 
-  // cinema fade
   useEffect(() => {
     if (stage !== "reveal") return;
-
-    const fadeIn = setTimeout(() => {
-      document.body.classList.add("cinema-fade");
-    }, 7500);
-
+    const fadeIn = setTimeout(
+      () => document.body.classList.add("cinema-fade"),
+      7500,
+    );
     const switchStage = setTimeout(() => {
       document.body.classList.remove("cinema-fade");
       setStage("slides");
     }, 10000);
-
     return () => {
       clearTimeout(fadeIn);
       clearTimeout(switchStage);
@@ -753,13 +725,9 @@ function App() {
 
   const goFullScreen = () => {
     const el = document.documentElement;
-    if (el.requestFullscreen) {
-      el.requestFullscreen();
-    } else if (el.webkitRequestFullscreen) {
-      el.webkitRequestFullscreen();
-    } else if (el.msRequestFullscreen) {
-      el.msRequestFullscreen();
-    }
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.msRequestFullscreen) el.msRequestFullscreen();
   };
 
   const openHeart = () => {
@@ -770,7 +738,8 @@ function App() {
     }
   };
 
-  const currentSlide = slides[slideIndex] ?? slides[0] ?? { title: "", text: "" };
+  const currentSlide = slides[slideIndex] ??
+    slides[0] ?? { title: "", text: "" };
 
   return (
     <main
@@ -779,6 +748,7 @@ function App() {
     >
       <audio ref={audioRef} loop />
       <div className="scanline" />
+      <Toaster position="bottom-center" />
 
       {stage !== "console" && stage !== "preload" && (
         <div className={`music-panel${panelExpanded ? " expanded" : ""}`}>
@@ -803,12 +773,13 @@ function App() {
         </div>
       )}
 
-      {/* Прелоадер */}
       {stage === "preload" && (
         <section className="console-screen">
           <div className="console" style={{ textAlign: "center" }}>
             <p className="tag">[loading assets]</p>
-            <p className="preload-text">Preloading gift... {loadingProgress}%</p>
+            <p className="preload-text">
+              Preloading gift... {loadingProgress}%
+            </p>
             <div className="progress-bar">
               <div
                 className="progress-fill"
@@ -908,7 +879,11 @@ function App() {
       {stage === "slides" && (
         <section className="reveal-screen">
           <canvas ref={galaxyRef} className="galaxy-canvas" />
-          <canvas ref={heartsRef} className="heart-canvas" style={{ zIndex: 0 }} />
+          <canvas
+            ref={heartsRef}
+            className="heart-canvas"
+            style={{ zIndex: 0 }}
+          />
           <div className="center-message" style={{ zIndex: 2 }}>
             <h1>{currentSlide.title}</h1>
             <div className="divider" />
@@ -923,9 +898,26 @@ function App() {
           <div className="center-message">
             <h1>❤️ Спасибо ❤️</h1>
             <p>Я просто хотел подарить тебе немного тепла.</p>
-            <div style={{ marginTop: 20 }}>
+            <div
+              style={{
+                marginTop: 20,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 12,
+              }}
+            >
               <button className="reencrypt" onClick={() => setStage("final")}>
                 ← Назад
+              </button>
+              <button
+                className="share-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleShare();
+                }}
+              >
+                Поделиться ❤️
               </button>
             </div>
           </div>
@@ -935,35 +927,53 @@ function App() {
       {stage === "final" && (
         <section className="reveal-screen">
           <canvas ref={galaxyRef} className="galaxy-canvas" />
-          <canvas ref={heartsRef} className="heart-canvas" style={{ zIndex: 0 }} />
+          <canvas
+            ref={heartsRef}
+            className="heart-canvas"
+            style={{ zIndex: 0 }}
+          />
           <div className="center-message" style={{ zIndex: 2 }}>
             <h1>💖 MESSAGE DECRYPTED</h1>
             <div className="divider" />
             <p style={{ color: "rgba(255,255,255,0.7)", maxWidth: 600 }}>
               {finalText}
             </p>
-            <button
-              className="reencrypt"
-              onClick={() => {
-                setPageIndex(0);
-                setCardOpen(true);
-                setIsUnlocked(true);
+            <div
+              style={{
+                marginTop: 20,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 12,
               }}
             >
-              открыть открытку
-            </button>
-            <button
-              className={`reencrypt ${!isUnlocked ? "locked" : ""}`}
-              onClick={() => {
-                if (!isUnlocked) return;
-                setActivePair(0);
-                setStage("photos");
-              }}
-              title={!isUnlocked ? "Сначала открой открытку" : ""}
-            >
-              {isUnlocked ? <FaLockOpen style={{ marginRight: 6 }} /> : <FaLock style={{ marginRight: 6 }} />}
-              продолжить
-            </button>
+              <button
+                className="reencrypt"
+                onClick={() => {
+                  setPageIndex(0);
+                  setCardOpen(true);
+                  setIsUnlocked(true);
+                }}
+              >
+                открыть открытку
+              </button>
+              <button
+                className={`reencrypt ${!isUnlocked ? "locked" : ""}`}
+                onClick={() => {
+                  if (!isUnlocked) return;
+                  setActivePair(0);
+                  setStage("photos");
+                }}
+                title={!isUnlocked ? "Сначала открой открытку" : ""}
+              >
+                {isUnlocked ? (
+                  <FaLockOpen style={{ marginRight: 6 }} />
+                ) : (
+                  <FaLock style={{ marginRight: 6 }} />
+                )}
+                продолжить
+              </button>
+            </div>
           </div>
         </section>
       )}
@@ -977,7 +987,6 @@ function App() {
           }}
         >
           <div className="card" onClick={(e) => e.stopPropagation()}>
-            {/* Фоновый узор */}
             <div className="pattern-bg">
               {patternIcons.map((icon, i) => (
                 <span
@@ -995,7 +1004,6 @@ function App() {
                 </span>
               ))}
             </div>
-
             <button
               className="card-close"
               onClick={() => {
@@ -1005,7 +1013,6 @@ function App() {
             >
               ✕
             </button>
-
             <div className="leaf-animation">
               {leaves.map((leaf, i) => (
                 <span
@@ -1022,12 +1029,10 @@ function App() {
                 </span>
               ))}
             </div>
-
             <h2>{cardPages[pageIndex].title}</h2>
             <p style={{ whiteSpace: "pre-line" }}>
               {cardPages[pageIndex].text}
             </p>
-
             <div className="card-controls">
               <button onClick={() => setPageIndex((p) => Math.max(0, p - 1))}>
                 ←
@@ -1050,4 +1055,4 @@ function App() {
   );
 }
 
-export default App;  
+export default App;
