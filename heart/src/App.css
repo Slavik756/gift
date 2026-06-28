@@ -196,6 +196,14 @@ html {
   background: rgba(255, 77, 109, 0.3);
 }
 
+/* Фиксация высоты текста слайдов — блок не скачет */
+.center-message p {
+  min-height: 10em;         /* достаточно для любого слайда */
+  transition: none;         /* убираем возможные transition */
+  display: block;
+  width: 100%;
+}
+
 .reencrypt {
   border: 0;
   background: transparent;

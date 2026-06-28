@@ -459,7 +459,7 @@ function App() {
     }
   }, [stage]);
 
-  // ===== Сердечко =====
+  // ===== Сердечко (исправленная версия, медленнее) =====
   useEffect(() => {
     if (stage !== "reveal") return;
     const canvas = canvasRef.current;
@@ -521,23 +521,6 @@ function App() {
     };
     document.addEventListener("visibilitychange", handleVisibility);
 
-    const addPoint = (t, size, cx, cy, scale, minA, maxA, maxDelay) => {
-      const x = 16 * Math.sin(t) ** 3;
-      const y = -(
-        13 * Math.cos(t) -
-        5 * Math.cos(2 * t) -
-        2 * Math.cos(3 * t) -
-        Math.cos(4 * t)
-      );
-      pointsRef.current.push({
-        x: cx + x * scale * size,
-        y: cy + y * scale * size,
-        alpha: 0,
-        targetAlpha: minA + Math.random() * (maxA - minA),
-        delay: Math.random() * maxDelay,
-      });
-    };
-
     const init = () => {
       if (animationId) cancelAnimationFrame(animationId);
       if (fadeTimer) clearTimeout(fadeTimer);
@@ -554,11 +537,44 @@ function App() {
       cx = window.innerWidth / 2;
       cy = window.innerHeight / 2;
       const scale = Math.min(window.innerWidth, window.innerHeight) / 40;
-      for (let t = 0; t < Math.PI * 2; t += 0.05)
-        addPoint(t, 1, cx, cy, scale, 0.8, 1, 2000);
-      for (let s = 0.2; s < 1; s += 0.2)
-        for (let t = 0; t < Math.PI * 2; t += 0.1)
-          addPoint(t, s, cx, cy, scale, 0.3, 0.8, 3000);
+
+      // Функция добавления точки с точной задержкой
+      const addPointWithDelay = (t, size, delay, minAlpha, maxAlpha) => {
+        const x = 16 * Math.sin(t) ** 3;
+        const y = -(
+          13 * Math.cos(t) -
+          5 * Math.cos(2 * t) -
+          2 * Math.cos(3 * t) -
+          Math.cos(4 * t)
+        );
+        pointsRef.current.push({
+          x: cx + x * scale * size,
+          y: cy + y * scale * size,
+          alpha: 0,
+          targetAlpha: minAlpha + Math.random() * (maxAlpha - minAlpha),
+          delay: delay,
+        });
+      };
+
+      // === 1. Внешний контур "паровозиком" (медленнее) ===
+      const startAngle = -Math.PI / 2;
+      const totalContourTime = 4000;
+      const contourSteps = Math.floor((Math.PI * 2) / 0.05);
+      for (let i = 0; i < contourSteps; i++) {
+        const t = startAngle + (i / contourSteps) * Math.PI * 2;
+        const delay = (i / contourSteps) * totalContourTime;
+        addPointWithDelay(t, 1, delay, 0.8, 1);
+      }
+
+      // === 2. Внутренние точки – хаотично после контура ===
+      const innerBaseDelay = totalContourTime + 400;
+      const innerMaxAdditionalDelay = 2500;
+      for (let s = 0.2; s < 1; s += 0.2) {
+        for (let t = 0; t < Math.PI * 2; t += 0.1) {
+          const delay = innerBaseDelay + Math.random() * innerMaxAdditionalDelay;
+          addPointWithDelay(t, s, delay, 0.3, 0.8);
+        }
+      }
 
       const scheduleFade = () => {
         if (allVisibleTimeRef.current) {
@@ -859,20 +875,12 @@ function App() {
     else if (el.msRequestFullscreen) el.msRequestFullscreen();
   };
 
-  const openHeart = () => {
-    goFullScreen();
-    if (isReady && stage === "console") {
-      playMusic();
-      setStage("memory");
-    }
-  };
-
   const currentSlide = slides[slideIndex] ?? slides[0] ?? { title: "", text: "" };
 
   return (
     <main
       className={`app ${isReady && stage === "console" ? "ready" : ""}`}
-      onClick={openHeart}
+      onClick={goFullScreen}
     >
       <audio ref={audioRef} loop />
       <div className="scanline" />
@@ -938,6 +946,7 @@ function App() {
                     className="decrypt"
                     onClick={(e) => {
                       e.stopPropagation();
+                      goFullScreen();
                       playMusic();
                       setStage("memory");
                     }}
@@ -984,7 +993,6 @@ function App() {
                   {pair.map((photo, idx) => {
                     const globalIndex = pairIndex * 2 + idx;
                     const tilt = polaroidTilts[globalIndex];
-                    // Начальный поворот: левый -12°, правый +12°
                     const startRotate = idx === 0 ? "-12deg" : "12deg";
                     return (
                       <div
