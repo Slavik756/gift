@@ -18,6 +18,7 @@ import img12 from "./assets/photos/12.jpg";
 
 import { RiVolumeUpFill, RiVolumeMuteFill } from "react-icons/ri";
 import { FaLock, FaLockOpen } from "react-icons/fa6";
+import { FiZoomIn } from "react-icons/fi";
 
 const START_TEXT = "Initializing heart.PROTOCOL_v2.0...";
 
@@ -111,6 +112,102 @@ const cardPages = [
   },
 ];
 
+// Компонент полноэкранного просмотра фото
+function PhotoLightbox({ src, caption, onClose }) {
+  const [scale, setScale] = useState(1);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const containerRef = useRef(null);
+  const initialDistance = useRef(null);
+
+  const handleMouseMove = useCallback((e) => {
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setOffset({ x: x * 10, y: y * 10 });
+  }, []);
+
+  useEffect(() => {
+    const handleOrientation = (e) => {
+      if (e.gamma === undefined || e.beta === undefined) return;
+      const x = Math.max(-1, Math.min(1, e.gamma / 45));
+      const y = Math.max(-1, Math.min(1, e.beta / 90));
+      setOffset({ x: x * 15, y: y * 15 });
+    };
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientation", handleOrientation);
+    }
+    return () =>
+      window.removeEventListener("deviceorientation", handleOrientation);
+  }, []);
+
+  const handleWheel = useCallback((e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    setScale((prev) => Math.max(1, Math.min(5, prev * delta)));
+  }, []);
+
+  const getDistance = (touches) => {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 2) {
+      initialDistance.current = getDistance(e.touches);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches.length === 2 && initialDistance.current) {
+      const currentDistance = getDistance(e.touches);
+      const scaleChange = currentDistance / initialDistance.current;
+      setScale((prev) => Math.max(1, Math.min(5, prev * scaleChange)));
+      initialDistance.current = currentDistance;
+    }
+  };
+
+  const close = () => {
+    setScale(1);
+    setOffset({ x: 0, y: 0 });
+    onClose();
+  };
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  return (
+    <div
+      className="lightbox-overlay"
+      onClick={close}
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      onWheel={handleWheel}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+    >
+      <div
+        className="lightbox-image-wrapper"
+        style={{
+          transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
+          transition: "transform 0.05s ease-out",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img src={src} alt={caption} className="lightbox-image" />
+        {caption && <p className="lightbox-caption">{caption}</p>}
+      </div>
+      <button className="lightbox-close" onClick={close}>
+        ✕
+      </button>
+    </div>
+  );
+}
+
 function App() {
   const canvasRef = useRef(null);
   const pointsRef = useRef([]);
@@ -145,15 +242,14 @@ function App() {
   const hidePanelTimer = useRef(null);
 
   const realProgressRef = useRef(0);
-  const loadingProgressRef = useRef(0); // только для чтения в эффектах
+  const loadingProgressRef = useRef(0);
 
-  // Синхронизация рефа со стейтом (вне рендера)
   useEffect(() => {
     loadingProgressRef.current = loadingProgress;
   }, [loadingProgress]);
 
   const [polaroidTilts] = useState(() =>
-    photos.map(() => (Math.random() - 0.5) * 6),
+    photos.map(() => (Math.random() - 0.5) * 6)
   );
 
   const [patternIcons] = useState(() =>
@@ -164,7 +260,7 @@ function App() {
       rotation: Math.random() * 360,
       opacity: 0.06 + Math.random() * 0.1,
       emoji: Math.random() < 0.5 ? "❤️" : "🌸",
-    })),
+    }))
   );
 
   const [leaves] = useState(() =>
@@ -173,8 +269,10 @@ function App() {
       delay: Math.random() * 7,
       size: 14 + Math.random() * 12,
       duration: 6 + Math.random() * 6,
-    })),
+    }))
   );
+
+  const [lightboxPhoto, setLightboxPhoto] = useState(null);
 
   const isMuted = volume === 0;
   const totalPairs = photoPairs.length;
@@ -199,9 +297,7 @@ function App() {
           },
           iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
         });
-      } catch {
-        // пользователь отменил
-      }
+      } catch {}
     } else {
       try {
         await navigator.clipboard.writeText(shareUrl);
@@ -220,7 +316,7 @@ function App() {
     }
   };
 
-  // ===== Прелоадер (исправлена ошибка с рефом) =====
+  // Прелоадер
   useEffect(() => {
     const resources = photos.map((p) => p.src);
     resources.push(music);
@@ -231,7 +327,6 @@ function App() {
     const updateRealProgress = () => {
       loadedCount++;
       realProgressRef.current = Math.round((loadedCount / total) * 100);
-
       if (loadedCount === total) {
         const startTime = Date.now();
         const minDelay = 3500;
@@ -253,7 +348,6 @@ function App() {
         }
         return prev;
       });
-      // Продолжаем, пока отображаемый прогресс не достиг 100
       if (loadingProgressRef.current < 100) {
         animFrame = requestAnimationFrame(animate);
       }
@@ -269,15 +363,11 @@ function App() {
 
     const audio = new Audio();
     audio.src = music;
-    audio.addEventListener("canplaythrough", updateRealProgress, {
-      once: true,
-    });
+    audio.addEventListener("canplaythrough", updateRealProgress, { once: true });
     audio.addEventListener("error", updateRealProgress, { once: true });
     audio.load();
     setTimeout(() => {
-      if (!audio.readyState || audio.readyState < 2) {
-        updateRealProgress();
-      }
+      if (!audio.readyState || audio.readyState < 2) updateRealProgress();
     }, 5000);
 
     return () => {
@@ -307,10 +397,7 @@ function App() {
       audio.loop = true;
     }
     audio.volume = volume;
-    audio
-      .play()
-      .then(() => setMusicPlaying(true))
-      .catch(() => {});
+    audio.play().then(() => setMusicPlaying(true)).catch(() => {});
   }, [volume]);
 
   const toggleMusic = useCallback(() => {
@@ -325,10 +412,7 @@ function App() {
       const newVolume = lastVolumeRef.current || 0.25;
       setVolume(newVolume);
       audio.volume = newVolume;
-      audio
-        .play()
-        .then(() => setMusicPlaying(true))
-        .catch(() => {});
+      audio.play().then(() => setMusicPlaying(true)).catch(() => {});
     }
   }, [volume]);
 
@@ -361,7 +445,7 @@ function App() {
     if (typedText.length < START_TEXT.length) {
       const timer = setTimeout(
         () => setTypedText(START_TEXT.slice(0, typedText.length + 1)),
-        90,
+        90
       );
       return () => clearTimeout(timer);
     }
@@ -369,7 +453,7 @@ function App() {
 
   const isReady = typedText.length === START_TEXT.length;
 
-  // Сердечко из "i love you"
+  // Сердечко с медленной пульсацией и долгой задержкой затемнения
   useEffect(() => {
     if (stage !== "reveal") return;
     const canvas = canvasRef.current;
@@ -377,12 +461,38 @@ function App() {
     const ctx = canvas.getContext("2d");
     let animationId,
       running = true;
+    let cx = window.innerWidth / 2;
+    let cy = window.innerHeight / 2;
+    const pulseDelay = 1000;
+    const pulseStartTimeRef = { current: null };
+    const allVisibleTimeRef = { current: null };
+    let fadeTimer = null;
 
     function draw(time) {
       if (!running) return;
       if (!startRef.current) startRef.current = time;
       const elapsed = time - startRef.current;
+
+      const allVisible =
+        pointsRef.current.length > 0 &&
+        pointsRef.current.every((p) => p.alpha >= p.targetAlpha - 0.01);
+
+      if (allVisible && allVisibleTimeRef.current === null) {
+        allVisibleTimeRef.current = time;
+        pulseStartTimeRef.current = time + pulseDelay;
+      }
+
+      let scale = 1;
+      if (pulseStartTimeRef.current !== null && time >= pulseStartTimeRef.current) {
+        const pulseElapsed = time - pulseStartTimeRef.current;
+        scale = 1 + 0.03 * Math.sin(pulseElapsed * 0.002); // медленное дыхание
+      }
+
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(scale, scale);
+      ctx.translate(-cx, -cy);
       ctx.font = "14px Fira Code, monospace";
       pointsRef.current.forEach((p) => {
         if (elapsed > p.delay) p.alpha += (p.targetAlpha - p.alpha) * 0.02;
@@ -390,6 +500,7 @@ function App() {
         const w = ctx.measureText("i love you").width;
         ctx.fillText("i love you", p.x - w / 2, p.y);
       });
+      ctx.restore();
       animationId = requestAnimationFrame(draw);
     }
 
@@ -423,6 +534,7 @@ function App() {
 
     const init = () => {
       if (animationId) cancelAnimationFrame(animationId);
+      if (fadeTimer) clearTimeout(fadeTimer);
       const ratio = window.devicePixelRatio || 1;
       canvas.width = window.innerWidth * ratio;
       canvas.height = window.innerHeight * ratio;
@@ -431,34 +543,58 @@ function App() {
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
       pointsRef.current = [];
       startRef.current = 0;
-      const cx = window.innerWidth / 2,
-        cy = window.innerHeight / 2;
+      allVisibleTimeRef.current = null;
+      pulseStartTimeRef.current = null;
+      cx = window.innerWidth / 2;
+      cy = window.innerHeight / 2;
       const scale = Math.min(window.innerWidth, window.innerHeight) / 45;
       for (let t = 0; t < Math.PI * 2; t += 0.05)
         addPoint(t, 1, cx, cy, scale, 0.8, 1, 2000);
       for (let s = 0.2; s < 1; s += 0.2)
         for (let t = 0; t < Math.PI * 2; t += 0.1)
           addPoint(t, s, cx, cy, scale, 0.3, 0.8, 3000);
+
+      const scheduleFade = () => {
+        if (allVisibleTimeRef.current) {
+          const fadeAt = allVisibleTimeRef.current + pulseDelay + 6000; // 10 секунд пульсации
+          const now = performance.now();
+          const delay = Math.max(0, fadeAt - now);
+          fadeTimer = setTimeout(() => {
+            document.body.classList.add("cinema-fade");
+            setTimeout(() => {
+              document.body.classList.remove("cinema-fade");
+              setStage("slides");
+            }, 4500);
+          }, delay);
+        } else {
+          fadeTimer = setTimeout(scheduleFade, 100);
+        }
+      };
+      scheduleFade();
+
       animationId = requestAnimationFrame(draw);
     };
+
     init();
     window.addEventListener("resize", init);
     return () => {
       running = false;
       cancelAnimationFrame(animationId);
+      if (fadeTimer) clearTimeout(fadeTimer);
       window.removeEventListener("resize", init);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [stage]);
 
+  // Автосмена пар (стоп при открытом лайтбоксе)
   useEffect(() => {
-    if (stage !== "photos") return;
+    if (stage !== "photos" || lightboxPhoto) return;
     const interval = setInterval(
       () => setActivePair((prev) => (prev + 1) % totalPairs),
-      6000,
+      6000
     );
     return () => clearInterval(interval);
-  }, [stage, totalPairs]);
+  }, [stage, totalPairs, lightboxPhoto]);
 
   useEffect(() => {
     if (stage !== "photos") return;
@@ -581,8 +717,7 @@ function App() {
       hearts.push({
         x: Math.random() * window.innerWidth,
         y: -20,
-        speed:
-          stage === "final" ? 0.6 + Math.random() * 1 : 1 + Math.random() * 1.5,
+        speed: stage === "final" ? 0.6 + Math.random() * 1 : 1 + Math.random() * 1.5,
         alpha: 1,
         size: 14 + Math.random() * 8,
       });
@@ -675,7 +810,7 @@ function App() {
         timeouts.push(
           setTimeout(() => {
             if (!cancelled) setStage("reveal");
-          }, 800),
+          }, 800)
         );
         return;
       }
@@ -693,10 +828,10 @@ function App() {
                 lineIndex++;
                 charIndex = 0;
                 runLine();
-              }, 1400),
+              }, 1400)
             );
           }
-        }, 110),
+        }, 110)
       );
     };
     runLine();
@@ -704,22 +839,6 @@ function App() {
       cancelled = true;
       intervals.forEach(clearInterval);
       timeouts.forEach(clearTimeout);
-    };
-  }, [stage]);
-
-  useEffect(() => {
-    if (stage !== "reveal") return;
-    const fadeIn = setTimeout(
-      () => document.body.classList.add("cinema-fade"),
-      7500,
-    );
-    const switchStage = setTimeout(() => {
-      document.body.classList.remove("cinema-fade");
-      setStage("slides");
-    }, 10000);
-    return () => {
-      clearTimeout(fadeIn);
-      clearTimeout(switchStage);
     };
   }, [stage]);
 
@@ -738,8 +857,7 @@ function App() {
     }
   };
 
-  const currentSlide = slides[slideIndex] ??
-    slides[0] ?? { title: "", text: "" };
+  const currentSlide = slides[slideIndex] ?? slides[0] ?? { title: "", text: "" };
 
   return (
     <main
@@ -860,11 +978,25 @@ function App() {
                         className="photo-polaroid"
                         style={{ transform: `rotate(${tilt}deg)` }}
                       >
-                        <img
-                          src={photo.src}
-                          className="photo"
-                          alt={photo.text}
-                        />
+                        <div
+                          className="photo-wrapper"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setLightboxPhoto({
+                              src: photo.src,
+                              caption: photo.text,
+                            });
+                          }}
+                        >
+                          <img
+                            src={photo.src}
+                            className="photo"
+                            alt={photo.text}
+                          />
+                          <span className="zoom-icon">
+                            <FiZoomIn />
+                          </span>
+                        </div>
                         <p className="photo-caption">{photo.text}</p>
                       </div>
                     );
@@ -873,6 +1005,13 @@ function App() {
               ))}
             </div>
           </div>
+          {lightboxPhoto && (
+            <PhotoLightbox
+              src={lightboxPhoto.src}
+              caption={lightboxPhoto.caption}
+              onClose={() => setLightboxPhoto(null)}
+            />
+          )}
         </section>
       )}
 

@@ -623,15 +623,46 @@ body.cinema-fade::after {
   padding: 14px 14px 44px 14px;
   display: inline-block;
 }
-.photo-polaroid .photo {
+
+.photo-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 2px;
+}
+.photo-wrapper .photo {
+  display: block;
   width: 100%;
   max-width: 300px;
   aspect-ratio: 3/4;
   object-fit: cover;
   border-radius: 2px;
-  display: block;
-  margin: 0 auto;
 }
+.zoom-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.55);          /* тёмный фон */
+  backdrop-filter: blur(6px);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  color: #ffffff;                           /* белая иконка */
+  font-size: 16px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15), 0 2px 6px rgba(0,0,0,0.3);
+}
+.photo-wrapper:hover .zoom-icon,
+.photo-wrapper:active .zoom-icon {
+  opacity: 1;
+}
+
 .photo-caption {
   margin-top: 10px;
   font-family: "Fira Code", monospace;
@@ -663,6 +694,71 @@ body.cinema-fade::after {
   border-color: rgba(255, 77, 109, 0.7);
   box-shadow: 0 0 14px rgba(255, 77, 109, 0.3);
   transform: translateY(-2px);
+}
+
+/* ---------- Lightbox ---------- */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  z-index: 10000;
+  cursor: zoom-out;
+  overflow: hidden;
+}
+
+.lightbox-image-wrapper {
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+.lightbox-image {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.lightbox-caption {
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: "Fira Code", monospace;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 77, 109, 0.15);
+  border: 1px solid rgba(255, 77, 109, 0.4);
+  color: #ff8fb1;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: all 0.25s;
+  z-index: 10001;
+}
+.lightbox-close:hover {
+  background: rgba(255, 77, 109, 0.3);
+  transform: scale(1.1);
 }
 
 @media (max-width: 560px) {
