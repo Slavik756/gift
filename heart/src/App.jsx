@@ -244,12 +244,14 @@ function App() {
   const realProgressRef = useRef(0);
   const loadingProgressRef = useRef(0);
 
+  const [revealLeaving, setRevealLeaving] = useState(false);
+
   useEffect(() => {
     loadingProgressRef.current = loadingProgress;
   }, [loadingProgress]);
 
   const [polaroidTilts] = useState(() =>
-    photos.map(() => (Math.random() - 0.5) * 6)
+    photos.map(() => (Math.random() - 0.5) * 6),
   );
 
   const [patternIcons] = useState(() =>
@@ -260,7 +262,7 @@ function App() {
       rotation: Math.random() * 360,
       opacity: 0.06 + Math.random() * 0.1,
       emoji: Math.random() < 0.5 ? "❤️" : "🌸",
-    }))
+    })),
   );
 
   const [leaves] = useState(() =>
@@ -269,7 +271,7 @@ function App() {
       delay: Math.random() * 7,
       size: 14 + Math.random() * 12,
       duration: 6 + Math.random() * 6,
-    }))
+    })),
   );
 
   const [lightboxPhoto, setLightboxPhoto] = useState(null);
@@ -280,6 +282,16 @@ function App() {
   const shareUrl = "https://gift-chi-five.vercel.app/";
   const shareText = "Посмотри, что мне сделали ❤️";
 
+  const toastStyle = {
+    style: {
+      background: "rgba(255, 77, 109, 0.15)",
+      color: "#ff8fb1",
+      border: "1px solid rgba(255, 77, 109, 0.4)",
+      backdropFilter: "blur(8px)",
+    },
+    iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
+  };
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -288,35 +300,21 @@ function App() {
           text: shareText,
           url: shareUrl,
         });
-        toast.success("Спасибо, что поделился! 💖", {
-          style: {
-            background: "rgba(255, 77, 109, 0.15)",
-            color: "#ff8fb1",
-            border: "1px solid rgba(255, 77, 109, 0.4)",
-            backdropFilter: "blur(8px)",
-          },
-          iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
-        });
-      } catch {}
+        toast.success("Спасибо, что поделился! 💖", toastStyle);
+      } catch {
+        // Игнорируем – пользователь отменил шаринг или браузер не поддерживает
+      }
     } else {
       try {
         await navigator.clipboard.writeText(shareUrl);
-        toast.success("Ссылка скопирована! 🔗", {
-          style: {
-            background: "rgba(255, 77, 109, 0.15)",
-            color: "#ff8fb1",
-            border: "1px solid rgba(255, 77, 109, 0.4)",
-            backdropFilter: "blur(8px)",
-          },
-          iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
-        });
+        toast.success("Ссылка скопирована! 🔗", toastStyle);
       } catch {
         toast.error("Не удалось скопировать ссылку");
       }
     }
   };
 
-  // Прелоадер
+  // ===== Прелоадер =====
   useEffect(() => {
     const resources = photos.map((p) => p.src);
     resources.push(music);
@@ -363,7 +361,9 @@ function App() {
 
     const audio = new Audio();
     audio.src = music;
-    audio.addEventListener("canplaythrough", updateRealProgress, { once: true });
+    audio.addEventListener("canplaythrough", updateRealProgress, {
+      once: true,
+    });
     audio.addEventListener("error", updateRealProgress, { once: true });
     audio.load();
     setTimeout(() => {
@@ -375,6 +375,7 @@ function App() {
     };
   }, []);
 
+  // Громкость и музыка
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
@@ -397,7 +398,10 @@ function App() {
       audio.loop = true;
     }
     audio.volume = volume;
-    audio.play().then(() => setMusicPlaying(true)).catch(() => {});
+    audio
+      .play()
+      .then(() => setMusicPlaying(true))
+      .catch(() => {});
   }, [volume]);
 
   const toggleMusic = useCallback(() => {
@@ -412,7 +416,10 @@ function App() {
       const newVolume = lastVolumeRef.current || 0.25;
       setVolume(newVolume);
       audio.volume = newVolume;
-      audio.play().then(() => setMusicPlaying(true)).catch(() => {});
+      audio
+        .play()
+        .then(() => setMusicPlaying(true))
+        .catch(() => {});
     }
   }, [volume]);
 
@@ -440,12 +447,13 @@ function App() {
     toggleMusic();
   };
 
+  // Консольный ввод
   useEffect(() => {
     if (stage !== "console") return;
     if (typedText.length < START_TEXT.length) {
       const timer = setTimeout(
         () => setTypedText(START_TEXT.slice(0, typedText.length + 1)),
-        90
+        90,
       );
       return () => clearTimeout(timer);
     }
@@ -453,7 +461,15 @@ function App() {
 
   const isReady = typedText.length === START_TEXT.length;
 
-  // Сердечко с медленной пульсацией и долгой задержкой затемнения
+  // Сброс revealLeaving при возврате на reveal (без синхронного setState)
+  useEffect(() => {
+    if (stage === "reveal") {
+      const id = setTimeout(() => setRevealLeaving(false), 0);
+      return () => clearTimeout(id);
+    }
+  }, [stage]);
+
+  // ===== Сердечко из "i love you" с медленной пульсацией и плавным уходом =====
   useEffect(() => {
     if (stage !== "reveal") return;
     const canvas = canvasRef.current;
@@ -483,9 +499,12 @@ function App() {
       }
 
       let scale = 1;
-      if (pulseStartTimeRef.current !== null && time >= pulseStartTimeRef.current) {
+      if (
+        pulseStartTimeRef.current !== null &&
+        time >= pulseStartTimeRef.current
+      ) {
         const pulseElapsed = time - pulseStartTimeRef.current;
-        scale = 1 + 0.03 * Math.sin(pulseElapsed * 0.002); // медленное дыхание
+        scale = 1 + 0.03 * Math.sin(pulseElapsed * 0.002);
       }
 
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
@@ -493,7 +512,7 @@ function App() {
       ctx.translate(cx, cy);
       ctx.scale(scale, scale);
       ctx.translate(-cx, -cy);
-      ctx.font = "14px Fira Code, monospace";
+      ctx.font = "16px Fira Code, monospace";
       pointsRef.current.forEach((p) => {
         if (elapsed > p.delay) p.alpha += (p.targetAlpha - p.alpha) * 0.02;
         ctx.fillStyle = `rgba(255,77,109,${p.alpha})`;
@@ -547,24 +566,28 @@ function App() {
       pulseStartTimeRef.current = null;
       cx = window.innerWidth / 2;
       cy = window.innerHeight / 2;
-      const scale = Math.min(window.innerWidth, window.innerHeight) / 45;
+      const scale = Math.min(window.innerWidth, window.innerHeight) / 40;
       for (let t = 0; t < Math.PI * 2; t += 0.05)
         addPoint(t, 1, cx, cy, scale, 0.8, 1, 2000);
       for (let s = 0.2; s < 1; s += 0.2)
         for (let t = 0; t < Math.PI * 2; t += 0.1)
           addPoint(t, s, cx, cy, scale, 0.3, 0.8, 3000);
 
+      // Пульсация 5 секунд, затемнение 3.5 секунды
       const scheduleFade = () => {
         if (allVisibleTimeRef.current) {
-          const fadeAt = allVisibleTimeRef.current + pulseDelay + 6000; // 10 секунд пульсации
+          const fadeAt = allVisibleTimeRef.current + pulseDelay + 5000;
           const now = performance.now();
           const delay = Math.max(0, fadeAt - now);
           fadeTimer = setTimeout(() => {
-            document.body.classList.add("cinema-fade");
+            setRevealLeaving(true);
             setTimeout(() => {
-              document.body.classList.remove("cinema-fade");
-              setStage("slides");
-            }, 4500);
+              document.body.classList.add("cinema-fade");
+              setTimeout(() => {
+                document.body.classList.remove("cinema-fade");
+                setStage("slides");
+              }, 3500);
+            }, 1000);
           }, delay);
         } else {
           fadeTimer = setTimeout(scheduleFade, 100);
@@ -591,7 +614,7 @@ function App() {
     if (stage !== "photos" || lightboxPhoto) return;
     const interval = setInterval(
       () => setActivePair((prev) => (prev + 1) % totalPairs),
-      6000
+      6000,
     );
     return () => clearInterval(interval);
   }, [stage, totalPairs, lightboxPhoto]);
@@ -717,7 +740,8 @@ function App() {
       hearts.push({
         x: Math.random() * window.innerWidth,
         y: -20,
-        speed: stage === "final" ? 0.6 + Math.random() * 1 : 1 + Math.random() * 1.5,
+        speed:
+          stage === "final" ? 0.6 + Math.random() * 1 : 1 + Math.random() * 1.5,
         alpha: 1,
         size: 14 + Math.random() * 8,
       });
@@ -810,7 +834,7 @@ function App() {
         timeouts.push(
           setTimeout(() => {
             if (!cancelled) setStage("reveal");
-          }, 800)
+          }, 800),
         );
         return;
       }
@@ -828,10 +852,10 @@ function App() {
                 lineIndex++;
                 charIndex = 0;
                 runLine();
-              }, 1400)
+              }, 1400),
             );
           }
-        }, 110)
+        }, 110),
       );
     };
     runLine();
@@ -857,7 +881,8 @@ function App() {
     }
   };
 
-  const currentSlide = slides[slideIndex] ?? slides[0] ?? { title: "", text: "" };
+  const currentSlide = slides[slideIndex] ??
+    slides[0] ?? { title: "", text: "" };
 
   return (
     <main
@@ -869,7 +894,9 @@ function App() {
       <Toaster position="bottom-center" />
 
       {stage !== "console" && stage !== "preload" && (
-        <div className={`music-panel${panelExpanded ? " expanded" : ""}`}>
+        <div
+          className={`music-panel${panelExpanded ? " expanded" : ""}${lightboxPhoto ? " music-hidden" : ""}`}
+        >
           <button
             className="music-toggle"
             onClick={handleMusicToggleClick}
@@ -920,21 +947,23 @@ function App() {
               <span className="tag">[status]</span>
               {isReady && <span className="status">READY</span>}
             </div>
-            {isReady && (
-              <div className="package">
-                <p>&gt; One encrypted package found for you.</p>
-                <button
-                  className="decrypt"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    playMusic();
-                    setStage("memory");
-                  }}
-                >
-                  Decrypt Message
-                </button>
-              </div>
-            )}
+            <div className="console-package-wrapper">
+              {isReady && (
+                <div className="package">
+                  <p>&gt; One encrypted package found for you.</p>
+                  <button
+                    className="decrypt"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playMusic();
+                      setStage("memory");
+                    }}
+                  >
+                    Decrypt Message
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </section>
       )}
@@ -943,14 +972,16 @@ function App() {
         <section className="console-screen">
           <div className="console">
             <div className="tag">[memory core]</div>
-            <p className="memory-date">1 July 2026 Happy Birthday</p>
-            <p>{memoryText}</p>
+            <p className="memory-date">1 July 2026</p>
+            <p style={{ minHeight: "1.5em" }}>{memoryText || "\u00A0"}</p>
           </div>
         </section>
       )}
 
       {stage === "reveal" && (
-        <section className="reveal-screen">
+        <section
+          className={`reveal-screen ${revealLeaving ? "reveal-leaving" : ""}`}
+        >
           <canvas ref={canvasRef} className="heart-canvas" />
           <div className="center-message">
             <h1>Decrypted</h1>

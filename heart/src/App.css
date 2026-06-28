@@ -40,6 +40,35 @@ html {
   animation: scanline 10s linear infinite;
 }
 
+/* Плавное появление сцен при монтировании */
+.console-screen,
+.reveal-screen,
+.photo-screen {
+  animation: sceneFadeIn 1.5s ease both;
+}
+
+@keyframes sceneFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Плавное исчезновение сцены Reveal (без подъёма) */
+.reveal-screen.reveal-leaving {
+  animation: sceneFadeOut 1s ease forwards;
+}
+
+@keyframes sceneFadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
 .console-screen,
 .reveal-screen {
   position: absolute;
@@ -62,6 +91,9 @@ html {
   gap: 10px;
   align-items: center;
 }
+.console-package-wrapper {
+  min-height: 120px;
+}
 .tag {
   color: rgba(255, 143, 177, 0.62);
   white-space: nowrap;
@@ -75,7 +107,16 @@ html {
   gap: 24px;
   justify-items: start;
   padding-top: 46px;
-  animation: packageEnter 480ms ease both;
+  animation: packageFadeIn 0.8s ease both;
+}
+
+@keyframes packageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .package p {
   margin: 0;
@@ -197,6 +238,10 @@ html {
   transition: all 0.25s ease;
   overflow: hidden;
 }
+.music-panel.music-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 .music-panel:hover {
   background: rgba(0, 0, 0, 0.55);
   border-color: rgba(255, 77, 109, 0.25);
@@ -270,16 +315,6 @@ html {
   }
   100% {
     bottom: -100px;
-  }
-}
-@keyframes packageEnter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 @keyframes centerEnter {
@@ -364,8 +399,19 @@ body.cinema-fade::after {
   z-index: 2;
   text-align: center;
   color: white;
-  animation: fadeIn 1s ease;
+  animation: photoFadeIn 1s ease;
 }
+@keyframes photoFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .photo-pair {
   position: relative;
   width: min(90vw, 800px);
@@ -643,7 +689,7 @@ body.cinema-fade::after {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(0, 0, 0, 0.55);          /* тёмный фон */
+  background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(6px);
   width: 30px;
   height: 30px;
@@ -654,9 +700,11 @@ body.cinema-fade::after {
   opacity: 0;
   transition: opacity 0.25s ease;
   pointer-events: none;
-  color: #ffffff;                           /* белая иконка */
+  color: #ffffff;
   font-size: 16px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15), 0 2px 6px rgba(0,0,0,0.3);
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.15),
+    0 2px 6px rgba(0, 0, 0, 0.3);
 }
 .photo-wrapper:hover .zoom-icon,
 .photo-wrapper:active .zoom-icon {
