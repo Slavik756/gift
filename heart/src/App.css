@@ -414,7 +414,7 @@ body.cinema-fade::after {
 
 .photo-pair {
   position: relative;
-  width: min(90vw, 800px);
+  width: min(90vw, 1100px);
   aspect-ratio: 16/10;
   margin: 0 auto;
   overflow: hidden;
@@ -443,30 +443,94 @@ body.cinema-fade::after {
   pointer-events: auto;
 }
 
+/* ---------- МОБИЛЬНАЯ ВЕРСИЯ (телефоны) ---------- */
 @media (max-width: 600px) {
   .photo-screen {
     overflow-y: auto;
+    align-items: flex-start;
+    box-sizing: border-box;
   }
+
   .photo-pair {
+    width: 100%;
+    max-width: 100%;
     aspect-ratio: unset;
     height: auto;
-    max-height: none;
     overflow: visible;
     position: static;
+    margin-top: 10px;
   }
+
+  .photo-wrapper .photo {
+    max-width: 45vw;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+  }
+
   .pair-wrapper {
     position: static !important;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px;
     width: 100%;
     height: auto;
     opacity: 1;
     transform: none;
     transition: none;
     pointer-events: auto;
+    padding: 0 5vw;
   }
+
   .pair-wrapper:not(.active) {
     display: none;
+  }
+
+  .pair-wrapper.active .photo-polaroid {
+    animation: none;
+  }
+
+  .photo-polaroid {
+    padding: 8px 8px 28px 8px;
+  }
+
+  .photo-caption {
+    font-size: 0.8rem;
+    margin-top: 6px;
+  }
+
+  html {
+    font-size: 18px;
+  }
+  .console {
+    font-size: 0.75rem;
+  }
+  .decrypt {
+    font-size: 0.8rem;
+  }
+  .preload-text,
+  .memory-date {
+    font-size: 0.7rem;
+  }
+  .center-message h1 {
+    font-size: 1.4rem;
+  }
+  .center-message p,
+  .reveal-screen p {
+    font-size: 0.95rem;
+  }
+  .card h2 {
+    font-size: 1.3rem;
+  }
+  .card p {
+    font-size: 0.95rem;
+  }
+  .reencrypt {
+    font-size: 0.8rem;
+  }
+  .share-btn {
+    font-size: 0.9rem;
+    padding: 12px 28px;
   }
 }
 
@@ -680,7 +744,7 @@ body.cinema-fade::after {
 .photo-wrapper .photo {
   display: block;
   width: 100%;
-  max-width: 300px;
+  max-width: 420px;
   aspect-ratio: 3/4;
   object-fit: cover;
   border-radius: 2px;
@@ -809,6 +873,30 @@ body.cinema-fade::after {
   transform: scale(1.1);
 }
 
+/* ---------- Анимация падающих поляроидов ---------- */
+@keyframes polaroidDrop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(20px) rotate(var(--start-rotate, -10deg));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotate(var(--tilt, 0deg));
+  }
+}
+
+.pair-wrapper.active .photo-polaroid {
+  animation: polaroidDrop 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Разная задержка для левого и правого снимка */
+.pair-wrapper.active .photo-polaroid:nth-child(1) {
+  animation-delay: 0s;
+}
+.pair-wrapper.active .photo-polaroid:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
 @media (max-width: 560px) {
   .console-screen,
   .reveal-screen {
@@ -832,45 +920,6 @@ body.cinema-fade::after {
   }
   .music-toggle {
     font-size: 18px;
-  }
-}
-
-@media (max-width: 600px) {
-  html {
-    font-size: 18px;
-  }
-  .console {
-    font-size: 0.75rem;
-  }
-  .decrypt {
-    font-size: 0.8rem;
-  }
-  .preload-text,
-  .memory-date {
-    font-size: 0.7rem;
-  }
-  .center-message h1 {
-    font-size: 1.4rem;
-  }
-  .center-message p,
-  .reveal-screen p {
-    font-size: 0.95rem;
-  }
-  .photo-caption {
-    font-size: 1rem;
-  }
-  .card h2 {
-    font-size: 1.3rem;
-  }
-  .card p {
-    font-size: 0.95rem;
-  }
-  .reencrypt {
-    font-size: 0.8rem;
-  }
-  .share-btn {
-    font-size: 0.9rem;
-    padding: 12px 28px;
   }
 }
 
