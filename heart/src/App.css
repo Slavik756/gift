@@ -817,16 +817,15 @@ body.cinema-fade::after {
 }
 
 /* ---------- Lightbox ---------- */
+
 .lightbox-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.92);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 1);
   display: grid;
-  place-items: center;
-  z-index: 10000;
+  place-items: center;    
   cursor: zoom-out;
-  overflow: hidden;
+  overflow: hidden;   
 }
 
 .lightbox-image-wrapper {

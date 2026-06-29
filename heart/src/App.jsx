@@ -112,7 +112,7 @@ const cardPages = [
   },
 ];
 
-// Стиль для уведомлений (чтобы не дублировать)
+// Стиль для уведомлений
 const toastStyle = {
   style: {
     background: "rgba(255, 77, 109, 0.15)",
@@ -123,11 +123,29 @@ const toastStyle = {
   iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
 };
 
+// -------------------------------------------------------------
+// Компонент лайтбокса (исправлен)
+// -------------------------------------------------------------
 function PhotoLightbox({ src, caption, onClose }) {
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
   const initialDistance = useRef(null);
+
+  // ---- ИСПРАВЛЕНИЕ 1: обработчик колесика через addEventListener ----
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const wheelHandler = (e) => {
+      e.preventDefault(); // теперь работает без ошибки
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      setScale((prev) => Math.max(1, Math.min(5, prev * delta)));
+    };
+
+    el.addEventListener('wheel', wheelHandler, { passive: false });
+    return () => el.removeEventListener('wheel', wheelHandler);
+  }, []);
 
   const handleMouseMove = useCallback((e) => {
     const rect = containerRef.current.getBoundingClientRect();
@@ -147,12 +165,6 @@ function PhotoLightbox({ src, caption, onClose }) {
       window.addEventListener("deviceorientation", handleOrientation);
     }
     return () => window.removeEventListener("deviceorientation", handleOrientation);
-  }, []);
-
-  const handleWheel = useCallback((e) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    setScale((prev) => Math.max(1, Math.min(5, prev * delta)));
   }, []);
 
   const getDistance = (touches) => {
@@ -195,9 +207,10 @@ function PhotoLightbox({ src, caption, onClose }) {
       onClick={close}
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
+      // ---- ИСПРАВЛЕНИЕ 2: отключаем нативный pinch-zoom ----
+      style={{ touchAction: 'none' }}
     >
       <div
         className="lightbox-image-wrapper"
@@ -217,6 +230,9 @@ function PhotoLightbox({ src, caption, onClose }) {
   );
 }
 
+// -------------------------------------------------------------
+// Основной компонент App
+// -------------------------------------------------------------
 function App() {
   const canvasRef = useRef(null);
   const pointsRef = useRef([]);
@@ -538,7 +554,6 @@ function App() {
       cy = window.innerHeight / 2;
       const scale = Math.min(window.innerWidth, window.innerHeight) / 40;
 
-      // Функция добавления точки с точной задержкой
       const addPointWithDelay = (t, size, delay, minAlpha, maxAlpha) => {
         const x = 16 * Math.sin(t) ** 3;
         const y = -(
@@ -556,7 +571,6 @@ function App() {
         });
       };
 
-      // === 1. Внешний контур "паровозиком" (медленнее) ===
       const startAngle = -Math.PI / 2;
       const totalContourTime = 4000;
       const contourSteps = Math.floor((Math.PI * 2) / 0.05);
@@ -566,7 +580,6 @@ function App() {
         addPointWithDelay(t, 1, delay, 0.8, 1);
       }
 
-      // === 2. Внутренние точки – хаотично после контура ===
       const innerBaseDelay = totalContourTime + 400;
       const innerMaxAdditionalDelay = 2500;
       for (let s = 0.2; s < 1; s += 0.2) {
