@@ -2,6 +2,7 @@
 import "./App.css";
 import toast, { Toaster } from "react-hot-toast";
 import music from "./assets/music/music.mp3";
+import music2 from "./assets/music/music2.mp3"; // второй трек
 
 import img1 from "./assets/photos/1.jpg";
 import img2 from "./assets/photos/2.jpg";
@@ -135,6 +136,9 @@ const toastStyle = {
   iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
 };
 
+// -------------------------------------------------------------
+// Компонент лайтбокса
+// -------------------------------------------------------------
 function PhotoLightbox({ src, caption, onClose }) {
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -265,13 +269,18 @@ function PhotoLightbox({ src, caption, onClose }) {
   );
 }
 
+// -------------------------------------------------------------
+// Основной компонент App
+// -------------------------------------------------------------
 function App() {
   const canvasRef = useRef(null);
   const pointsRef = useRef([]);
   const heartsRef = useRef(null);
   const heartsRefLocal = useRef([]);
   const startRef = useRef(0);
-  const audioRef = useRef(null);
+  const audioRef1 = useRef(null);
+  const audioRef2 = useRef(null);
+  const currentTrackRef = useRef(1);
   const galaxyRef = useRef(null);
   const starsRef = useRef([]);
 
@@ -291,6 +300,7 @@ function App() {
 
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [volume, setVolume] = useState(0.25);
+  const [musicAllowed, setMusicAllowed] = useState(false); // ← новый флаг
 
   const [isUnlocked, setIsUnlocked] = useState(false);
 
@@ -302,7 +312,6 @@ function App() {
   const loadingProgressRef = useRef(0);
 
   const [revealLeaving, setRevealLeaving] = useState(false);
-
   const consoleTimerRef = useRef(null);
 
   useEffect(() => {
@@ -310,7 +319,7 @@ function App() {
   }, [loadingProgress]);
 
   const [polaroidTilts] = useState(() =>
-    photos.map(() => (Math.random() - 0.5) * 6),
+    photos.map(() => (Math.random() - 0.5) * 6)
   );
 
   const [patternIcons] = useState(() =>
@@ -321,7 +330,7 @@ function App() {
       rotation: Math.random() * 360,
       opacity: 0.06 + Math.random() * 0.1,
       emoji: Math.random() < 0.5 ? "❤️" : "🌸",
-    })),
+    }))
   );
 
   const [leaves] = useState(() =>
@@ -330,7 +339,7 @@ function App() {
       delay: Math.random() * 7,
       size: 14 + Math.random() * 12,
       duration: 6 + Math.random() * 6,
-    })),
+    }))
   );
 
   const [lightboxPhoto, setLightboxPhoto] = useState(null);
@@ -351,7 +360,7 @@ function App() {
         });
         toast.success("Спасибо, что поделился! 💖", toastStyle);
       } catch {
-        // Игнорируем – пользователь отменил шаринг
+         // пользователь отменил шаринг – ничего не делаем
       }
     } else {
       try {
@@ -363,13 +372,13 @@ function App() {
     }
   };
 
+  // Прелоадер
   useEffect(() => {
     const resources = photos.map((p) => p.src);
-    resources.push(music);
+    resources.push(music, music2);
     const total = resources.length;
     let loadedCount = 0;
     let animFrame = null;
-    let audioCounted = false;
 
     const updateRealProgress = () => {
       loadedCount++;
@@ -408,35 +417,68 @@ function App() {
       img.src = photo.src;
     });
 
-    const audio = new Audio();
-    audio.src = music;
-    const countAudioOnce = () => {
-      if (!audioCounted) {
-        audioCounted = true;
-        updateRealProgress();
-      }
-    };
-    audio.addEventListener("canplaythrough", countAudioOnce, { once: true });
-    audio.addEventListener("error", countAudioOnce, { once: true });
-    audio.load();
+    const audio1 = new Audio();
+    audio1.src = music;
+    audio1.addEventListener("canplaythrough", updateRealProgress, { once: true });
+    audio1.addEventListener("error", updateRealProgress, { once: true });
+    audio1.load();
 
-    const timeoutId = setTimeout(countAudioOnce, 5000);
+    const audio2 = new Audio();
+    audio2.src = music2;
+    audio2.addEventListener("canplaythrough", updateRealProgress, { once: true });
+    audio2.addEventListener("error", updateRealProgress, { once: true });
+    audio2.load();
 
     return () => {
       if (animFrame) cancelAnimationFrame(animFrame);
-      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  // Инициализация двух аудио-объектов с переключением по кругу
+  useEffect(() => {
+    const a1 = new Audio(music);
+    const a2 = new Audio(music2);
+    audioRef1.current = a1;
+    audioRef2.current = a2;
+
+    const playNext = () => {
+      if (currentTrackRef.current === 1) {
+        currentTrackRef.current = 2;
+        a2.currentTime = 0;
+        a2.play().catch((e) => {
+          if (e.name !== "AbortError") console.error(e);
+        });
+      } else {
+        currentTrackRef.current = 1;
+        a1.currentTime = 0;
+        a1.play().catch((e) => {
+          if (e.name !== "AbortError") console.error(e);
+        });
+      }
+    };
+
+    a1.addEventListener("ended", playNext);
+    a2.addEventListener("ended", playNext);
+
+    return () => {
+      a1.removeEventListener("ended", playNext);
+      a2.removeEventListener("ended", playNext);
+      a1.pause();
+      a2.pause();
     };
   }, []);
 
   // Громкость и музыка
   useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = volume;
+    if (audioRef1.current) audioRef1.current.volume = volume;
+    if (audioRef2.current) audioRef2.current.volume = volume;
   }, [volume]);
 
   useEffect(() => {
     if (volume === 0 && musicPlaying) {
       const timer = setTimeout(() => {
-        audioRef.current?.pause();
+        audioRef1.current?.pause();
+        audioRef2.current?.pause();
         setMusicPlaying(false);
       }, 0);
       return () => clearTimeout(timer);
@@ -444,44 +486,52 @@ function App() {
   }, [volume, musicPlaying]);
 
   const playMusic = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (!audio.src) {
-      audio.src = music;
-      audio.loop = true;
-    }
-    audio.volume = volume;
-    audio
-      .play()
-      .then(() => setMusicPlaying(true))
-      .catch(() => {});
+    const a1 = audioRef1.current;
+    const a2 = audioRef2.current;
+    if (!a1 || !a2) return;
+    a1.volume = volume;
+    a2.volume = volume;
+    const current = currentTrackRef.current === 1 ? a1 : a2;
+    current.play()
+      .then(() => {
+        setMusicPlaying(true);
+        setMusicAllowed(true);   // ← теперь музыка разрешена
+      })
+      .catch((e) => {
+        if (e.name !== "AbortError") console.error(e);
+      });
   }, [volume]);
 
   const toggleMusic = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    const a1 = audioRef1.current;
+    const a2 = audioRef2.current;
+    if (!a1 || !a2) return;
     if (volume > 0) {
       lastVolumeRef.current = volume;
       setVolume(0);
-      audio.pause();
+      a1.pause();
+      a2.pause();
       setMusicPlaying(false);
     } else {
       const newVolume = lastVolumeRef.current || 0.25;
       setVolume(newVolume);
-      audio.volume = newVolume;
-      audio
-        .play()
-        .then(() => setMusicPlaying(true))
-        .catch(() => {});
+      a1.volume = newVolume;
+      a2.volume = newVolume;
+      if (musicAllowed) {
+        const current = currentTrackRef.current === 1 ? a1 : a2;
+        current.play().then(() => setMusicPlaying(true)).catch((e) => {
+          if (e.name !== "AbortError") console.error(e);
+        });
+      }
     }
-  }, [volume]);
+  }, [volume, musicAllowed]);
 
-  const handleVolumeChange = (e) => {
-    e.stopPropagation();
-    const newVolume = Number(e.target.value);
-    setVolume(newVolume);
-    if (newVolume > 0 && !musicPlaying) playMusic();
-  };
+const handleVolumeChange = (e) => {
+  e.stopPropagation();
+  const newVolume = Number(e.target.value);
+  setVolume(newVolume);
+  if (newVolume > 0 && !musicPlaying && musicAllowed) playMusic();
+};
 
   const scheduleHidePanel = () => {
     if (hidePanelTimer.current) clearTimeout(hidePanelTimer.current);
@@ -500,12 +550,13 @@ function App() {
     toggleMusic();
   };
 
+  // Консольный ввод
   useEffect(() => {
     if (stage !== "console") return;
     if (typedText.length < START_TEXT.length) {
       consoleTimerRef.current = setTimeout(
         () => setTypedText(START_TEXT.slice(0, typedText.length + 1)),
-        90,
+        90
       );
     }
     return () => {
@@ -525,13 +576,13 @@ function App() {
     }
   }, [stage]);
 
+  // Сердечко (без изменений)
   useEffect(() => {
     if (stage !== "reveal") return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    let animationId,
-      running = true;
+    let animationId, running = true;
     let cx = window.innerWidth / 2;
     let cy = window.innerHeight / 2;
     const pulseDelay = 1000;
@@ -554,10 +605,7 @@ function App() {
       }
 
       let scale = 1;
-      if (
-        pulseStartTimeRef.current !== null &&
-        time >= pulseStartTimeRef.current
-      ) {
+      if (pulseStartTimeRef.current !== null && time >= pulseStartTimeRef.current) {
         const pulseElapsed = time - pulseStartTimeRef.current;
         scale = 1 + 0.03 * Math.sin(pulseElapsed * 0.002);
       }
@@ -608,12 +656,7 @@ function App() {
 
       const addPointWithDelay = (t, size, delay, minAlpha, maxAlpha) => {
         const x = 16 * Math.sin(t) ** 3;
-        const y = -(
-          13 * Math.cos(t) -
-          5 * Math.cos(2 * t) -
-          2 * Math.cos(3 * t) -
-          Math.cos(4 * t)
-        );
+        const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
         pointsRef.current.push({
           x: cx + x * scale * size,
           y: cy + y * scale * size,
@@ -636,8 +679,7 @@ function App() {
       const innerMaxAdditionalDelay = 2500;
       for (let s = 0.2; s < 1; s += 0.2) {
         for (let t = 0; t < Math.PI * 2; t += 0.1) {
-          const delay =
-            innerBaseDelay + Math.random() * innerMaxAdditionalDelay;
+          const delay = innerBaseDelay + Math.random() * innerMaxAdditionalDelay;
           addPointWithDelay(t, s, delay, 0.3, 0.8);
         }
       }
@@ -677,20 +719,21 @@ function App() {
     };
   }, [stage]);
 
+  // Автосмена пар (стоп при открытом лайтбоксе)
   useEffect(() => {
     if (stage !== "photos" || lightboxPhoto) return;
     const interval = setInterval(
       () => setActivePair((prev) => (prev + 1) % totalPairs),
-      6000,
+      6000
     );
     return () => clearInterval(interval);
   }, [stage, totalPairs, lightboxPhoto]);
 
- useEffect(() => {
-  if (stage !== "photos" || lightboxPhoto) return;
-  const timer = setTimeout(() => setStage("end"), photos.length * 3000);
-  return () => clearTimeout(timer);
-}, [stage, lightboxPhoto]);
+  useEffect(() => {
+    if (stage !== "photos" || lightboxPhoto) return;
+    const timer = setTimeout(() => setStage("end"), photos.length * 3000);
+    return () => clearTimeout(timer);
+  }, [stage, lightboxPhoto]);
 
   // Галактический фон
   useEffect(() => {
@@ -698,11 +741,8 @@ function App() {
     const canvas = galaxyRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    let animId,
-      running = true,
-      lastTime = 0;
-    const fps = 30,
-      interval = 1000 / fps;
+    let animId, running = true, lastTime = 0;
+    const fps = 30, interval = 1000 / fps;
 
     const handleVisibility = () => {
       if (document.hidden) {
@@ -797,9 +837,7 @@ function App() {
     const canvas = heartsRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    let running = true,
-      animId,
-      lastTime = 0;
+    let running = true, animId, lastTime = 0;
     const hearts = heartsRefLocal.current;
     hearts.length = 0;
     const spawnInterval = setInterval(() => {
@@ -807,8 +845,7 @@ function App() {
       hearts.push({
         x: Math.random() * window.innerWidth,
         y: -20,
-        speed:
-          stage === "final" ? 0.6 + Math.random() * 1 : 1 + Math.random() * 1.5,
+        speed: stage === "final" ? 0.6 + Math.random() * 1 : 1 + Math.random() * 1.5,
         alpha: 1,
         size: 14 + Math.random() * 8,
       });
@@ -889,11 +926,8 @@ function App() {
       "Syncing shared memories...",
       "Almost ready ❤️",
     ];
-    let lineIndex = 0,
-      charIndex = 0,
-      cancelled = false;
-    const intervals = [],
-      timeouts = [];
+    let lineIndex = 0, charIndex = 0, cancelled = false;
+    const intervals = [], timeouts = [];
     const runLine = () => {
       if (cancelled) return;
       const line = lines[lineIndex];
@@ -901,7 +935,7 @@ function App() {
         timeouts.push(
           setTimeout(() => {
             if (!cancelled) setStage("reveal");
-          }, 800),
+          }, 800)
         );
         return;
       }
@@ -919,10 +953,10 @@ function App() {
                 lineIndex++;
                 charIndex = 0;
                 runLine();
-              }, 1400),
+              }, 1400)
             );
           }
-        }, 110),
+        }, 110)
       );
     };
     runLine();
@@ -940,19 +974,17 @@ function App() {
     else if (el.msRequestfullscreen) el.msRequestFullscreen();
   };
 
-  const currentSlide = slides[slideIndex] ??
-    slides[0] ?? { title: "", text: "" };
+  const currentSlide = slides[slideIndex] ?? slides[0] ?? { title: "", text: "" };
 
   return (
     <main
       className={`app ${isReady && stage === "console" ? "ready" : ""}`}
       onClick={goFullScreen}
     >
-      <audio ref={audioRef} loop />
       <div className="scanline" />
       <Toaster position="bottom-center" />
 
-      {stage !== "console" && stage !== "preload" && (
+      {stage !== "preload" && (
         <div
           className={`music-panel${panelExpanded ? " expanded" : ""}${lightboxPhoto ? " music-hidden" : ""}`}
         >
