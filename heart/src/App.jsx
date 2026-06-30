@@ -15,6 +15,12 @@ import img9 from "./assets/photos/9.jpg";
 import img10 from "./assets/photos/10.jpg";
 import img11 from "./assets/photos/11.jpg";
 import img12 from "./assets/photos/12.jpg";
+import img13 from "./assets/photos/13.jpg";
+import img14 from "./assets/photos/14.jpg";
+import img15 from "./assets/photos/15.jpg";
+import img16 from "./assets/photos/16.jpg";
+import img17 from "./assets/photos/17.jpg";
+import img18 from "./assets/photos/18.jpg";
 
 import { RiVolumeUpFill, RiVolumeMuteFill } from "react-icons/ri";
 import { FaLock, FaLockOpen } from "react-icons/fa6";
@@ -23,18 +29,24 @@ import { FiZoomIn } from "react-icons/fi";
 const START_TEXT = "Initializing heart.PROTOCOL_v2.0...";
 
 const photos = [
-  { src: img1, text: "Твоя улыбка 💖" },
-  { src: img2, text: "Счастливый момент" },
-  { src: img3, text: "Ты такая красивая здесь" },
-  { src: img4, text: "Просто ты — и этого достаточно" },
-  { src: img5, text: "Твоя улыбка 💖" },
-  { src: img6, text: "Счастливый момент" },
-  { src: img7, text: "Ты такая красивая здесь" },
-  { src: img8, text: "Просто ты — и этого достаточно" },
-  { src: img9, text: "Твоя улыбка 💖" },
-  { src: img10, text: "Счастливый момент" },
-  { src: img11, text: "Ты такая красивая здесь" },
-  { src: img12, text: "Просто ты — и этого достаточно" },
+  { src: img1, text: "Твои глаза 💖" },
+  { src: img2, text: "Твоя улыбочка ❤️" },
+  { src: img3, text: "Ты здесь такая радостная" },
+  { src: img4, text: "Здесь ты так ярко улыбаешься" },
+  { src: img5, text: "Такая счастливая 💖" },
+  { src: img6, text: "Ты такая забавная с рожками" },
+  { src: img7, text: "Ты как всегда невероятна" },
+  { src: img8, text: "Можно смотреть вечно" },
+  { src: img9, text: "С милыми бантиками ❤️" },
+  { src: img10, text: "Всегда такая милая" },
+  { src: img11, text: "Этот невероятный взгляд" },
+  { src: img12, text: "По утрам всегда хочу смотреть на тебя" },
+  { src: img13, text: "Ты как всегда принцесса" },
+  { src: img14, text: "Мой Ангелочек ❤️" },
+  { src: img15, text: "Без чмока со Златой нельзя ❤️" },
+  { src: img16, text: "Как всегда серьёзные со Златой 💖" },
+  { src: img17, text: "Мы счастливые 💖" },
+  { src: img18, text: "Со Златочкой прижимаетесь ❤️" },
 ];
 
 const photoPairs = [];
@@ -44,51 +56,51 @@ for (let i = 0; i < photos.length; i += 2) {
 
 const slides = [
   {
-    title: "Запуск воспоминаний",
-    text: `Инициализация чувств...\nТы — первый стабильный сигнал в моей жизни.\nС этого момента всё стало осмысленнее.`,
+    title: "Запускаем воспоминания",
+    text: `Инициализация чувств...\nТы тот самый стабильный сигнал в моей жизни.\nС этого момента всё стало осмысленнее и радостнее быть рядом с тобой.`,
   },
   {
     title: "Почему я счастлив",
-    text: `Потому что ты появилась в моей жизни.\nИ даже обычные дни стали теплее и спокойнее.\nС тобой всё внутри стало тише и правильнее.`,
+    text: `Потому что ты появилась в моей жизни и сделала её лучше.\nИ даже обычные дни стали теплее, спокойнее и светлее.\nС тобой всё внутри стало спокойнее и правильнее.`,
   },
   {
-    title: "Маленькие моменты",
-    text: `Твои сообщения.\nТвоя тишина рядом.\nТвои случайные слова и улыбки.\nИ именно из этого складывается моё счастье.`,
+    title: "Маленькие счастливые моменты",
+    text: `Твои сообщения.\nТвоё счастье рядом.\nТвои случайные слова, улыбки и шутки.\nИ именно ты — то счастье, которое мне нужно.`,
   },
   {
     title: "Что я чувствую",
-    text: `Я люблю тебя не за что-то конкретное.\nА за тебя — настоящую.\nЗа всё, что делает тебя тобой.`,
+    text: `Я люблю тебя не за что-то конкретное.\nА за то, какая ты настоящая, и за твоё сердце.\nЗа всё, что делает тебя тобой: твой характер, твои мысли и действия.`,
   },
   {
     title: "Когда тебя нет рядом",
-    text: `Мир становится тише и пустее.\nНо даже тогда ты остаёшься в мыслях.\nКак что-то очень родное и постоянное.`,
+    text: `Мир становится тёмным и пустым, и тяжело что-то разглядеть в нём без тебя.\nНо даже тогда ты остаёшься в мыслях, и из-за этого появляется искра.\nКак что-то очень родное и постоянное счастье.`,
   },
   {
-    title: "Как я тебя люблю",
-    text: `Тихо. Глубоко. Без лишних слов.\nИногда даже сам не могу это объяснить.\nНо это всегда больше, чем просто чувство.`,
+    title: "Я тебя очень люблю",
+    text: `Спокойно. Глубоко. Без лишних слов.\nМне самому иногда тяжело это объяснить.\nНо это всегда больше, чем просто чувство, и оно такое тёплое внутри.`,
   },
   {
-    title: "Будущее",
-    text: `Я не знаю, что будет дальше.\nНо я хочу, чтобы в этом будущем была ты.\nИ чтобы таких дней было ещё очень много.`,
+    title: "Будущее с тобой",
+    text: `Я не знаю, что будет дальше.\nНо я хочу, чтобы в этом будущем была ты.\nИ чтобы таких дней было ещё очень много — как радостных моментов, так и просто разных мгновений с тобой.`,
   },
   {
     title: "С днём рождения ❤️",
-    text: `Я желаю тебе самого важного — спокойного счастья.\nТакого, которое не нужно искать или заслуживать.\nТы уже его заслуживаешь просто тем, что ты есть.\n\nЯ люблю тебя.\nИ если этот текст что-то должен сказать — то только это.`,
+    text: `Я желаю тебе больше радостных моментов, чтобы ты всегда улыбалась своей красивой улыбкой.\nТакой, которую не нужно заслуживать или добиваться.\nЯ уже счастлив просто тем, что ты есть.\n\nЯ люблю тебя.\nИ если этот текст что-то должен сказать — то только то, что ты вызываешь у меня улыбку.`,
   },
 ];
 
 const cardPages = [
   {
     title: "Для тебя ❤️",
-    text: `Я сделал эту открытку специально для тебя.\nНе потому что надо, а потому что мне правда хочется сказать тебе важное.\n\nТы стала для меня очень близким и дорогим человеком, и я просто хотел оставить это здесь — в этих словах.`,
+    text: `Я сделал этот сайт специально для тебя.\nНе потому что надо, а потому что мне правда хочется сказать тебе важное.\n\nТы стала для меня очень близким и дорогим человеком, и я очень рад, что ты появилась в моей жизни и вижу твою улыбку каждый день.`,
   },
   {
-    title: "Ты для меня",
-    text: `С тобой моя жизнь стала намного теплее и приятнее.\nДаже обычные дни с тобой ощущаются по-другому — легче, спокойнее и как-то правильнее.\n\nТы умеешь делать простые вещи особенными, даже не замечая этого.`,
+    title: "Я тебя вижу так",
+    text: `С тобой моя жизнь стала намного теплее, приятнее и спокойнее, и каждый день напоминает счастье.\nДаже обычные дни с тобой ощущаются по-другому: легче, спокойнее и как-то необычнее.\n\nТы умеешь делать простые вещи особенными, даже не замечая этого, и у меня появилось желание помогать и ухаживать за тобой, чтобы тебе было только лучше.`,
   },
   {
-    title: "Моменты с тобой",
-    text: `Я ценю каждый момент с тобой — разговоры, шутки, твои сообщения, даже самые обычные.\n\nИногда именно такие маленькие вещи и создают самое сильное чувство.\nИ с тобой их особенно много.`,
+    title: "Счастливые моменты с тобой",
+    text: `Я ценю каждый момент с тобой — разговоры, шутки, твои сообщения, звонки, наше проведённое время вместе.\n\nИногда именно такие маленькие вещи и создают самое сильное чувство.\nИ с тобой их особенно много.`,
   },
   {
     title: "Когда ты рядом",
@@ -96,7 +108,7 @@ const cardPages = [
   },
   {
     title: "Почему ты важна",
-    text: `Ты стала для меня важной не из-за чего-то одного.\nА просто потому, какая ты есть.\n\nВ тебе есть что-то очень тёплое и настоящее, что мне очень близко.`,
+    text: `Ты стала для меня важной не из-за чего-то одного.\nА просто потому, какая ты есть.\n\nВ тебе есть что-то очень тёплое и настоящее, что мне очень близко, и из-за этого я хочу помогать, выслушивать твои проблемы и решать их.`,
   },
   {
     title: "Моё чувство к тебе",
@@ -104,11 +116,11 @@ const cardPages = [
   },
   {
     title: "Моё пожелание тебе",
-    text: `Я хочу, чтобы ты была счастлива.\nЧтобы у тебя было больше поводов улыбаться, радоваться и чувствовать себя хорошо.\n\nЧтобы ты всегда знала, что ты ценная и важная.`,
+    text: `Я хочу, чтобы ты была счастлива каждую секунду, и благодаря твоей улыбке мир становится ярче.\nЧтобы у тебя было больше поводов улыбаться, радоваться и чувствовать себя хорошо.\n\nЧтобы ты всегда знала, что ты ценная и важная, и что тебя всегда ждут и переживают за тебя.`,
   },
   {
-    title: "С днём рождения ❤️",
-    text: `Спасибо тебе за тебя.\nЗа то, что ты есть в моей жизни и делаешь её лучше просто своим присутствием.\n\nЯ правда очень рад, что ты рядом.\nИ я тебя люблю — спокойно, искренне и по-настоящему.`,
+    title: "С днём рождения, Ангелочек ❤️",
+    text: `Спасибо тебе за то, что ты есть.\nЗа то, что ты существуешь в моей жизни и делаешь её лучше просто своим присутствием.\n\nЯ правда очень рад, что ты рядом с моим сердцем.\nИ я тебя люблю — за твоё спокойствие, сумасшествие и характер.`,
   },
 ];
 
@@ -123,28 +135,59 @@ const toastStyle = {
   iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
 };
 
-// -------------------------------------------------------------
-// Компонент лайтбокса (исправлен)
-// -------------------------------------------------------------
 function PhotoLightbox({ src, caption, onClose }) {
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
   const initialDistance = useRef(null);
 
-  // ---- ИСПРАВЛЕНИЕ 1: обработчик колесика через addEventListener ----
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
     const wheelHandler = (e) => {
-      e.preventDefault(); // теперь работает без ошибки
+      e.preventDefault();
       const delta = e.deltaY > 0 ? 0.9 : 1.1;
       setScale((prev) => Math.max(1, Math.min(5, prev * delta)));
     };
 
-    el.addEventListener('wheel', wheelHandler, { passive: false });
-    return () => el.removeEventListener('wheel', wheelHandler);
+    el.addEventListener("wheel", wheelHandler, { passive: false });
+    return () => el.removeEventListener("wheel", wheelHandler);
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const getDistance = (touches) => {
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const touchStartHandler = (e) => {
+      if (e.touches.length === 2) {
+        initialDistance.current = getDistance(e.touches);
+      }
+    };
+
+    const touchMoveHandler = (e) => {
+      e.preventDefault();
+      if (e.touches.length === 2 && initialDistance.current) {
+        const currentDistance = getDistance(e.touches);
+        const scaleChange = currentDistance / initialDistance.current;
+        setScale((prev) => Math.max(1, Math.min(5, prev * scaleChange)));
+        initialDistance.current = currentDistance;
+      }
+    };
+
+    el.addEventListener("touchstart", touchStartHandler, { passive: false });
+    el.addEventListener("touchmove", touchMoveHandler, { passive: false });
+
+    return () => {
+      el.removeEventListener("touchstart", touchStartHandler);
+      el.removeEventListener("touchmove", touchMoveHandler);
+    };
   }, []);
 
   const handleMouseMove = useCallback((e) => {
@@ -164,29 +207,9 @@ function PhotoLightbox({ src, caption, onClose }) {
     if (window.DeviceOrientationEvent) {
       window.addEventListener("deviceorientation", handleOrientation);
     }
-    return () => window.removeEventListener("deviceorientation", handleOrientation);
+    return () =>
+      window.removeEventListener("deviceorientation", handleOrientation);
   }, []);
-
-  const getDistance = (touches) => {
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  };
-
-  const handleTouchStart = (e) => {
-    if (e.touches.length === 2) {
-      initialDistance.current = getDistance(e.touches);
-    }
-  };
-
-  const handleTouchMove = (e) => {
-    if (e.touches.length === 2 && initialDistance.current) {
-      const currentDistance = getDistance(e.touches);
-      const scaleChange = currentDistance / initialDistance.current;
-      setScale((prev) => Math.max(1, Math.min(5, prev * scaleChange)));
-      initialDistance.current = currentDistance;
-    }
-  };
 
   const close = () => {
     setScale(1);
@@ -195,22 +218,28 @@ function PhotoLightbox({ src, caption, onClose }) {
   };
 
   useEffect(() => {
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
     };
   }, []);
 
   return (
     <div
       className="lightbox-overlay"
-      onClick={close}
+      onClick={(e) => {
+        e.stopPropagation();
+        close();
+      }}
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      // ---- ИСПРАВЛЕНИЕ 2: отключаем нативный pinch-zoom ----
-      style={{ touchAction: 'none' }}
+      style={{ touchAction: "none" }}
     >
       <div
         className="lightbox-image-wrapper"
@@ -223,16 +252,19 @@ function PhotoLightbox({ src, caption, onClose }) {
         <img src={src} alt={caption} className="lightbox-image" />
         {caption && <p className="lightbox-caption">{caption}</p>}
       </div>
-      <button className="lightbox-close" onClick={close}>
+      <button
+        className="lightbox-close"
+        onClick={(e) => {
+          e.stopPropagation();
+          close();
+        }}
+      >
         ✕
       </button>
     </div>
   );
 }
 
-// -------------------------------------------------------------
-// Основной компонент App
-// -------------------------------------------------------------
 function App() {
   const canvasRef = useRef(null);
   const pointsRef = useRef([]);
@@ -271,12 +303,14 @@ function App() {
 
   const [revealLeaving, setRevealLeaving] = useState(false);
 
+  const consoleTimerRef = useRef(null);
+
   useEffect(() => {
     loadingProgressRef.current = loadingProgress;
   }, [loadingProgress]);
 
   const [polaroidTilts] = useState(() =>
-    photos.map(() => (Math.random() - 0.5) * 6)
+    photos.map(() => (Math.random() - 0.5) * 6),
   );
 
   const [patternIcons] = useState(() =>
@@ -287,7 +321,7 @@ function App() {
       rotation: Math.random() * 360,
       opacity: 0.06 + Math.random() * 0.1,
       emoji: Math.random() < 0.5 ? "❤️" : "🌸",
-    }))
+    })),
   );
 
   const [leaves] = useState(() =>
@@ -296,7 +330,7 @@ function App() {
       delay: Math.random() * 7,
       size: 14 + Math.random() * 12,
       duration: 6 + Math.random() * 6,
-    }))
+    })),
   );
 
   const [lightboxPhoto, setLightboxPhoto] = useState(null);
@@ -329,13 +363,13 @@ function App() {
     }
   };
 
-  // ===== Прелоадер =====
   useEffect(() => {
     const resources = photos.map((p) => p.src);
     resources.push(music);
     const total = resources.length;
     let loadedCount = 0;
     let animFrame = null;
+    let audioCounted = false;
 
     const updateRealProgress = () => {
       loadedCount++;
@@ -376,15 +410,21 @@ function App() {
 
     const audio = new Audio();
     audio.src = music;
-    audio.addEventListener("canplaythrough", updateRealProgress, { once: true });
-    audio.addEventListener("error", updateRealProgress, { once: true });
+    const countAudioOnce = () => {
+      if (!audioCounted) {
+        audioCounted = true;
+        updateRealProgress();
+      }
+    };
+    audio.addEventListener("canplaythrough", countAudioOnce, { once: true });
+    audio.addEventListener("error", countAudioOnce, { once: true });
     audio.load();
-    setTimeout(() => {
-      if (!audio.readyState || audio.readyState < 2) updateRealProgress();
-    }, 5000);
+
+    const timeoutId = setTimeout(countAudioOnce, 5000);
 
     return () => {
       if (animFrame) cancelAnimationFrame(animFrame);
+      clearTimeout(timeoutId);
     };
   }, []);
 
@@ -411,7 +451,10 @@ function App() {
       audio.loop = true;
     }
     audio.volume = volume;
-    audio.play().then(() => setMusicPlaying(true)).catch(() => {});
+    audio
+      .play()
+      .then(() => setMusicPlaying(true))
+      .catch(() => {});
   }, [volume]);
 
   const toggleMusic = useCallback(() => {
@@ -426,7 +469,10 @@ function App() {
       const newVolume = lastVolumeRef.current || 0.25;
       setVolume(newVolume);
       audio.volume = newVolume;
-      audio.play().then(() => setMusicPlaying(true)).catch(() => {});
+      audio
+        .play()
+        .then(() => setMusicPlaying(true))
+        .catch(() => {});
     }
   }, [volume]);
 
@@ -454,16 +500,20 @@ function App() {
     toggleMusic();
   };
 
-  // Консольный ввод
   useEffect(() => {
     if (stage !== "console") return;
     if (typedText.length < START_TEXT.length) {
-      const timer = setTimeout(
+      consoleTimerRef.current = setTimeout(
         () => setTypedText(START_TEXT.slice(0, typedText.length + 1)),
-        90
+        90,
       );
-      return () => clearTimeout(timer);
     }
+    return () => {
+      if (consoleTimerRef.current) {
+        clearTimeout(consoleTimerRef.current);
+        consoleTimerRef.current = null;
+      }
+    };
   }, [typedText, stage]);
 
   const isReady = typedText.length === START_TEXT.length;
@@ -475,7 +525,6 @@ function App() {
     }
   }, [stage]);
 
-  // ===== Сердечко (исправленная версия, медленнее) =====
   useEffect(() => {
     if (stage !== "reveal") return;
     const canvas = canvasRef.current;
@@ -505,7 +554,10 @@ function App() {
       }
 
       let scale = 1;
-      if (pulseStartTimeRef.current !== null && time >= pulseStartTimeRef.current) {
+      if (
+        pulseStartTimeRef.current !== null &&
+        time >= pulseStartTimeRef.current
+      ) {
         const pulseElapsed = time - pulseStartTimeRef.current;
         scale = 1 + 0.03 * Math.sin(pulseElapsed * 0.002);
       }
@@ -571,7 +623,7 @@ function App() {
         });
       };
 
-      const startAngle = -Math.PI / 2;
+      const startAngle = 0;
       const totalContourTime = 4000;
       const contourSteps = Math.floor((Math.PI * 2) / 0.05);
       for (let i = 0; i < contourSteps; i++) {
@@ -584,7 +636,8 @@ function App() {
       const innerMaxAdditionalDelay = 2500;
       for (let s = 0.2; s < 1; s += 0.2) {
         for (let t = 0; t < Math.PI * 2; t += 0.1) {
-          const delay = innerBaseDelay + Math.random() * innerMaxAdditionalDelay;
+          const delay =
+            innerBaseDelay + Math.random() * innerMaxAdditionalDelay;
           addPointWithDelay(t, s, delay, 0.3, 0.8);
         }
       }
@@ -624,12 +677,11 @@ function App() {
     };
   }, [stage]);
 
-  // Автосмена пар (стоп при открытом лайтбоксе)
   useEffect(() => {
     if (stage !== "photos" || lightboxPhoto) return;
     const interval = setInterval(
       () => setActivePair((prev) => (prev + 1) % totalPairs),
-      6000
+      6000,
     );
     return () => clearInterval(interval);
   }, [stage, totalPairs, lightboxPhoto]);
@@ -849,7 +901,7 @@ function App() {
         timeouts.push(
           setTimeout(() => {
             if (!cancelled) setStage("reveal");
-          }, 800)
+          }, 800),
         );
         return;
       }
@@ -867,10 +919,10 @@ function App() {
                 lineIndex++;
                 charIndex = 0;
                 runLine();
-              }, 1400)
+              }, 1400),
             );
           }
-        }, 110)
+        }, 110),
       );
     };
     runLine();
@@ -885,10 +937,11 @@ function App() {
     const el = document.documentElement;
     if (el.requestFullscreen) el.requestFullscreen();
     else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    else if (el.msRequestfullscreen) el.msRequestFullscreen();
   };
 
-  const currentSlide = slides[slideIndex] ?? slides[0] ?? { title: "", text: "" };
+  const currentSlide = slides[slideIndex] ??
+    slides[0] ?? { title: "", text: "" };
 
   return (
     <main
@@ -900,7 +953,9 @@ function App() {
       <Toaster position="bottom-center" />
 
       {stage !== "console" && stage !== "preload" && (
-        <div className={`music-panel${panelExpanded ? " expanded" : ""}${lightboxPhoto ? " music-hidden" : ""}`}>
+        <div
+          className={`music-panel${panelExpanded ? " expanded" : ""}${lightboxPhoto ? " music-hidden" : ""}`}
+        >
           <button
             className="music-toggle"
             onClick={handleMusicToggleClick}
@@ -984,7 +1039,9 @@ function App() {
       )}
 
       {stage === "reveal" && (
-        <section className={`reveal-screen ${revealLeaving ? "reveal-leaving" : ""}`}>
+        <section
+          className={`reveal-screen ${revealLeaving ? "reveal-leaving" : ""}`}
+        >
           <canvas ref={canvasRef} className="heart-canvas" />
           <div className="center-message">
             <h1>Decrypted</h1>
@@ -1014,7 +1071,6 @@ function App() {
                         style={{
                           "--start-rotate": startRotate,
                           "--tilt": `${tilt}deg`,
-                          transform: `rotate(${tilt}deg)`,
                         }}
                       >
                         <div
@@ -1044,13 +1100,6 @@ function App() {
               ))}
             </div>
           </div>
-          {lightboxPhoto && (
-            <PhotoLightbox
-              src={lightboxPhoto.src}
-              caption={lightboxPhoto.caption}
-              onClose={() => setLightboxPhoto(null)}
-            />
-          )}
         </section>
       )}
 
@@ -1149,7 +1198,7 @@ function App() {
                 ) : (
                   <FaLock style={{ marginRight: 6 }} />
                 )}
-                продолжить
+                Продолжить
               </button>
             </div>
           </div>
@@ -1159,7 +1208,8 @@ function App() {
       {cardOpen && (
         <div
           className="card-overlay"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             setCardOpen(false);
             setPageIndex(0);
           }}
@@ -1184,7 +1234,8 @@ function App() {
             </div>
             <button
               className="card-close"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setCardOpen(false);
                 setPageIndex(0);
               }}
@@ -1228,6 +1279,14 @@ function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {lightboxPhoto && (
+        <PhotoLightbox
+          src={lightboxPhoto.src}
+          caption={lightboxPhoto.caption}
+          onClose={() => setLightboxPhoto(null)}
+        />
       )}
     </main>
   );
