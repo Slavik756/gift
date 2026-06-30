@@ -16,6 +16,7 @@ html {
       transparent 34rem
     ),
     #050505;
+  color: white;
 }
 .app.ready {
   cursor: pointer;
@@ -73,6 +74,7 @@ html {
   display: grid;
   place-items: center;
   padding: 24px;
+  overflow: hidden auto;   /* ← добавлено: разрешаем прокрутку по вертикали */
 }
 
 .console {
@@ -194,7 +196,7 @@ html {
 }
 
 .center-message p {
-  min-height: 10em;
+  min-height: auto !important;   /* ← убрали огромный min-height */
   font-size: 0.95rem;
 }
 
@@ -906,4 +908,7 @@ html {
   .photo-caption {
     font-size: 18px;
   }
+  .preload-text {
+  font-size: 1rem;
+}
 }

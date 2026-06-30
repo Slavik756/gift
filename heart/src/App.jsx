@@ -686,11 +686,11 @@ function App() {
     return () => clearInterval(interval);
   }, [stage, totalPairs, lightboxPhoto]);
 
-  useEffect(() => {
-    if (stage !== "photos") return;
-    const timer = setTimeout(() => setStage("end"), photos.length * 3000);
-    return () => clearTimeout(timer);
-  }, [stage]);
+ useEffect(() => {
+  if (stage !== "photos" || lightboxPhoto) return;
+  const timer = setTimeout(() => setStage("end"), photos.length * 3000);
+  return () => clearTimeout(timer);
+}, [stage, lightboxPhoto]);
 
   // Галактический фон
   useEffect(() => {
