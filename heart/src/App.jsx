@@ -2,128 +2,14 @@
 import "./App.css";
 import toast, { Toaster } from "react-hot-toast";
 import music from "./assets/music/music.mp3";
-import music2 from "./assets/music/music2.mp3"; // второй трек
+import music2 from "./assets/music/music2.mp3";
 
-import img1 from "./assets/photos/1.jpg";
-import img2 from "./assets/photos/2.jpg";
-import img3 from "./assets/photos/3.jpg";
-import img4 from "./assets/photos/4.jpg";
-import img5 from "./assets/photos/5.jpg";
-import img6 from "./assets/photos/6.jpg";
-import img7 from "./assets/photos/7.jpg";
-import img8 from "./assets/photos/8.jpg";
-import img9 from "./assets/photos/9.jpg";
-import img10 from "./assets/photos/10.jpg";
-import img11 from "./assets/photos/11.jpg";
-import img12 from "./assets/photos/12.jpg";
-import img13 from "./assets/photos/13.jpg";
-import img14 from "./assets/photos/14.jpg";
-import img15 from "./assets/photos/15.jpg";
-import img16 from "./assets/photos/16.jpg";
-import img17 from "./assets/photos/17.jpg";
-import img18 from "./assets/photos/18.jpg";
-
-import { RiVolumeUpFill, RiVolumeMuteFill } from "react-icons/ri";
 import { FaLock, FaLockOpen } from "react-icons/fa6";
-import { FiZoomIn } from "react-icons/fi";
-
-const START_TEXT = "Initializing heart.PROTOCOL_v2.0...";
-
-const photos = [
-  { src: img1, text: "Твои глаза 💖" },
-  { src: img2, text: "Твоя улыбочка ❤️" },
-  { src: img3, text: "Ты здесь такая радостная" },
-  { src: img4, text: "Здесь ты так ярко улыбаешься" },
-  { src: img5, text: "Такая счастливая 💖" },
-  { src: img6, text: "Ты такая забавная с рожками" },
-  { src: img7, text: "Ты как всегда невероятна" },
-  { src: img8, text: "Можно смотреть вечно" },
-  { src: img9, text: "С милыми бантиками ❤️" },
-  { src: img10, text: "Всегда такая милая" },
-  { src: img11, text: "Этот невероятный взгляд" },
-  { src: img12, text: "По утрам всегда хочу смотреть на тебя" },
-  { src: img13, text: "Ты как всегда принцесса" },
-  { src: img14, text: "Мой Ангелочек ❤️" },
-  { src: img15, text: "Без чмока со Златой нельзя ❤️" },
-  { src: img16, text: "Как всегда серьёзные со Златой 💖" },
-  { src: img17, text: "Мы счастливые 💖" },
-  { src: img18, text: "Со Златочкой прижимаетесь ❤️" },
-];
-
-const photoPairs = [];
-for (let i = 0; i < photos.length; i += 2) {
-  photoPairs.push([photos[i], photos[i + 1]]);
-}
-
-const slides = [
-  {
-    title: "Запускаем воспоминания",
-    text: `Инициализация чувств...\nТы тот самый стабильный сигнал в моей жизни.\nС этого момента всё стало осмысленнее и радостнее быть рядом с тобой.`,
-  },
-  {
-    title: "Почему я счастлив",
-    text: `Потому что ты появилась в моей жизни и сделала её лучше.\nИ даже обычные дни стали теплее, спокойнее и светлее.\nС тобой всё внутри стало спокойнее и правильнее.`,
-  },
-  {
-    title: "Маленькие счастливые моменты",
-    text: `Твои сообщения.\nТвоё счастье рядом.\nТвои случайные слова, улыбки и шутки.\nИ именно ты — то счастье, которое мне нужно.`,
-  },
-  {
-    title: "Что я чувствую",
-    text: `Я люблю тебя не за что-то конкретное.\nА за то, какая ты настоящая, и за твоё сердце.\nЗа всё, что делает тебя тобой: твой характер, твои мысли и действия.`,
-  },
-  {
-    title: "Когда тебя нет рядом",
-    text: `Мир становится тёмным и пустым, и тяжело что-то разглядеть в нём без тебя.\nНо даже тогда ты остаёшься в мыслях, и из-за этого появляется искра.\nКак что-то очень родное и постоянное счастье.`,
-  },
-  {
-    title: "Я тебя очень люблю",
-    text: `Спокойно. Глубоко. Без лишних слов.\nМне самому иногда тяжело это объяснить.\nНо это всегда больше, чем просто чувство, и оно такое тёплое внутри.`,
-  },
-  {
-    title: "Будущее с тобой",
-    text: `Я не знаю, что будет дальше.\nНо я хочу, чтобы в этом будущем была ты.\nИ чтобы таких дней было ещё очень много — как радостных моментов, так и просто разных мгновений с тобой.`,
-  },
-  {
-    title: "С днём рождения ❤️",
-    text: `Я желаю тебе больше радостных моментов, чтобы ты всегда улыбалась своей красивой улыбкой.\nТакой, которую не нужно заслуживать или добиваться.\nЯ уже счастлив просто тем, что ты есть.\n\nЯ люблю тебя.\nИ если этот текст что-то должен сказать — то только то, что ты вызываешь у меня улыбку.`,
-  },
-];
-
-const cardPages = [
-  {
-    title: "Для тебя ❤️",
-    text: `Я сделал этот сайт специально для тебя.\nНе потому что надо, а потому что мне правда хочется сказать тебе важное.\n\nТы стала для меня очень близким и дорогим человеком, и я очень рад, что ты появилась в моей жизни и вижу твою улыбку каждый день.`,
-  },
-  {
-    title: "Я тебя вижу так",
-    text: `С тобой моя жизнь стала намного теплее, приятнее и спокойнее, и каждый день напоминает счастье.\nДаже обычные дни с тобой ощущаются по-другому: легче, спокойнее и как-то необычнее.\n\nТы умеешь делать простые вещи особенными, даже не замечая этого, и у меня появилось желание помогать и ухаживать за тобой, чтобы тебе было только лучше.`,
-  },
-  {
-    title: "Счастливые моменты с тобой",
-    text: `Я ценю каждый момент с тобой — разговоры, шутки, твои сообщения, звонки, наше проведённое время вместе.\n\nИногда именно такие маленькие вещи и создают самое сильное чувство.\nИ с тобой их особенно много.`,
-  },
-  {
-    title: "Когда ты рядом",
-    text: `Когда ты рядом, всё становится проще.\nНе нужно ничего придумывать или играть какую-то роль — можно просто быть собой.\n\nИ это ощущение очень ценное для меня.`,
-  },
-  {
-    title: "Почему ты важна",
-    text: `Ты стала для меня важной не из-за чего-то одного.\nА просто потому, какая ты есть.\n\nВ тебе есть что-то очень тёплое и настоящее, что мне очень близко, и из-за этого я хочу помогать, выслушивать твои проблемы и решать их.`,
-  },
-  {
-    title: "Моё чувство к тебе",
-    text: `Я люблю тебя спокойно и искренне.\nБез лишних слов и громких фраз — просто по-настоящему.\n\nТы для меня очень дорогой человек, и это чувство со мной постоянно.`,
-  },
-  {
-    title: "Моё пожелание тебе",
-    text: `Я хочу, чтобы ты была счастлива каждую секунду, и благодаря твоей улыбке мир становится ярче.\nЧтобы у тебя было больше поводов улыбаться, радоваться и чувствовать себя хорошо.\n\nЧтобы ты всегда знала, что ты ценная и важная, и что тебя всегда ждут и переживают за тебя.`,
-  },
-  {
-    title: "С днём рождения, Ангелочек ❤️",
-    text: `Спасибо тебе за то, что ты есть.\nЗа то, что ты существуешь в моей жизни и делаешь её лучше просто своим присутствием.\n\nЯ правда очень рад, что ты рядом с моим сердцем.\nИ я тебя люблю — за твоё спокойствие, сумасшествие и характер.`,
-  },
-];
+import { CardModal } from "./components/CardModal";
+import { MusicPanel } from "./components/MusicPanel";
+import { PhotoGallery } from "./components/PhotoGallery";
+import { PhotoLightbox } from "./components/PhotoLightbox";
+import { START_TEXT, cardPages, photoPairs, photos, slides } from "./data/story";
 
 // Стиль для уведомлений
 const toastStyle = {
@@ -135,139 +21,6 @@ const toastStyle = {
   },
   iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
 };
-
-// -------------------------------------------------------------
-// Компонент лайтбокса
-// -------------------------------------------------------------
-function PhotoLightbox({ src, caption, onClose }) {
-  const [scale, setScale] = useState(1);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const containerRef = useRef(null);
-  const initialDistance = useRef(null);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const wheelHandler = (e) => {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? 0.9 : 1.1;
-      setScale((prev) => Math.max(1, Math.min(5, prev * delta)));
-    };
-
-    el.addEventListener("wheel", wheelHandler, { passive: false });
-    return () => el.removeEventListener("wheel", wheelHandler);
-  }, []);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const getDistance = (touches) => {
-      const dx = touches[0].clientX - touches[1].clientX;
-      const dy = touches[0].clientY - touches[1].clientY;
-      return Math.sqrt(dx * dx + dy * dy);
-    };
-
-    const touchStartHandler = (e) => {
-      if (e.touches.length === 2) {
-        initialDistance.current = getDistance(e.touches);
-      }
-    };
-
-    const touchMoveHandler = (e) => {
-      e.preventDefault();
-      if (e.touches.length === 2 && initialDistance.current) {
-        const currentDistance = getDistance(e.touches);
-        const scaleChange = currentDistance / initialDistance.current;
-        setScale((prev) => Math.max(1, Math.min(5, prev * scaleChange)));
-        initialDistance.current = currentDistance;
-      }
-    };
-
-    el.addEventListener("touchstart", touchStartHandler, { passive: false });
-    el.addEventListener("touchmove", touchMoveHandler, { passive: false });
-
-    return () => {
-      el.removeEventListener("touchstart", touchStartHandler);
-      el.removeEventListener("touchmove", touchMoveHandler);
-    };
-  }, []);
-
-  const handleMouseMove = useCallback((e) => {
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setOffset({ x: x * 10, y: y * 10 });
-  }, []);
-
-  useEffect(() => {
-    const handleOrientation = (e) => {
-      if (e.gamma === undefined || e.beta === undefined) return;
-      const x = Math.max(-1, Math.min(1, e.gamma / 45));
-      const y = Math.max(-1, Math.min(1, e.beta / 90));
-      setOffset({ x: x * 15, y: y * 15 });
-    };
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener("deviceorientation", handleOrientation);
-    }
-    return () =>
-      window.removeEventListener("deviceorientation", handleOrientation);
-  }, []);
-
-  const close = () => {
-    setScale(1);
-    setOffset({ x: 0, y: 0 });
-    onClose();
-  };
-
-  useEffect(() => {
-    const originalBodyOverflow = document.body.style.overflow;
-    const originalHtmlOverflow = document.documentElement.style.overflow;
-
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = originalBodyOverflow;
-      document.documentElement.style.overflow = originalHtmlOverflow;
-    };
-  }, []);
-
-  return (
-    <div
-      className="lightbox-overlay"
-      onClick={(e) => {
-        e.stopPropagation();
-        close();
-      }}
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      style={{ touchAction: "none" }}
-    >
-      <div
-        className="lightbox-image-wrapper"
-        style={{
-          transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
-          transition: "transform 0.05s ease-out",
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <img src={src} alt={caption} className="lightbox-image" />
-        {caption && <p className="lightbox-caption">{caption}</p>}
-      </div>
-      <button
-        className="lightbox-close"
-        onClick={(e) => {
-          e.stopPropagation();
-          close();
-        }}
-      >
-        ✕
-      </button>
-    </div>
-  );
-}
 
 // -------------------------------------------------------------
 // Основной компонент App
@@ -379,21 +132,32 @@ function App() {
     const total = resources.length;
     let loadedCount = 0;
     let animFrame = null;
+    let finishTimer = null;
+    let cancelled = false;
+    const fallbackTimers = [];
+
+    const finishPreload = () => {
+      const startTime = Date.now();
+      const minDelay = 3500;
+      const tryFinish = () => {
+        if (cancelled) return;
+        if (Date.now() - startTime >= minDelay) {
+          finishTimer = window.setTimeout(() => {
+            if (!cancelled) setStage("console");
+          }, 300);
+        } else {
+          requestAnimationFrame(tryFinish);
+        }
+      };
+      tryFinish();
+    };
 
     const updateRealProgress = () => {
+      if (cancelled) return;
       loadedCount++;
       realProgressRef.current = Math.round((loadedCount / total) * 100);
       if (loadedCount === total) {
-        const startTime = Date.now();
-        const minDelay = 3500;
-        const tryFinish = () => {
-          if (Date.now() - startTime >= minDelay) {
-            setTimeout(() => setStage("console"), 300);
-          } else {
-            requestAnimationFrame(tryFinish);
-          }
-        };
-        tryFinish();
+        finishPreload();
       }
     };
 
@@ -412,25 +176,52 @@ function App() {
 
     photos.forEach((photo) => {
       const img = new Image();
-      img.onload = updateRealProgress;
-      img.onerror = updateRealProgress;
+      let completed = false;
+      const markLoaded = () => {
+        if (completed) return;
+        completed = true;
+        updateRealProgress();
+      };
+      img.onload = markLoaded;
+      img.onerror = markLoaded;
       img.src = photo.src;
     });
 
     const audio1 = new Audio();
     audio1.src = music;
-    audio1.addEventListener("canplaythrough", updateRealProgress, { once: true });
-    audio1.addEventListener("error", updateRealProgress, { once: true });
+    let audio1Completed = false;
+    const markAudio1Loaded = () => {
+      if (audio1Completed) return;
+      audio1Completed = true;
+      updateRealProgress();
+    };
+    audio1.addEventListener("canplaythrough", markAudio1Loaded, { once: true });
+    audio1.addEventListener("error", markAudio1Loaded, { once: true });
+    fallbackTimers.push(window.setTimeout(markAudio1Loaded, 10000));
     audio1.load();
 
     const audio2 = new Audio();
     audio2.src = music2;
-    audio2.addEventListener("canplaythrough", updateRealProgress, { once: true });
-    audio2.addEventListener("error", updateRealProgress, { once: true });
+    let audio2Completed = false;
+    const markAudio2Loaded = () => {
+      if (audio2Completed) return;
+      audio2Completed = true;
+      updateRealProgress();
+    };
+    audio2.addEventListener("canplaythrough", markAudio2Loaded, { once: true });
+    audio2.addEventListener("error", markAudio2Loaded, { once: true });
+    fallbackTimers.push(window.setTimeout(markAudio2Loaded, 10000));
     audio2.load();
 
     return () => {
+      cancelled = true;
       if (animFrame) cancelAnimationFrame(animFrame);
+      if (finishTimer) clearTimeout(finishTimer);
+      fallbackTimers.forEach(clearTimeout);
+      audio1.removeEventListener("canplaythrough", markAudio1Loaded);
+      audio1.removeEventListener("error", markAudio1Loaded);
+      audio2.removeEventListener("canplaythrough", markAudio2Loaded);
+      audio2.removeEventListener("error", markAudio2Loaded);
     };
   }, []);
 
@@ -969,9 +760,9 @@ const handleVolumeChange = (e) => {
 
   const goFullScreen = () => {
     const el = document.documentElement;
-    if (el.requestFullscreen) el.requestFullscreen();
+    if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
     else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    else if (el.msRequestfullscreen) el.msRequestFullscreen();
+    else if (el.msRequestFullscreen) el.msRequestFullscreen();
   };
 
   const currentSlide = slides[slideIndex] ?? slides[0] ?? { title: "", text: "" };
@@ -979,34 +770,19 @@ const handleVolumeChange = (e) => {
   return (
     <main
       className={`app ${isReady && stage === "console" ? "ready" : ""}`}
-      onClick={goFullScreen}
     >
       <div className="scanline" />
       <Toaster position="bottom-center" />
 
       {stage !== "preload" && (
-        <div
-          className={`music-panel${panelExpanded ? " expanded" : ""}${lightboxPhoto ? " music-hidden" : ""}`}
-        >
-          <button
-            className="music-toggle"
-            onClick={handleMusicToggleClick}
-            aria-label={isMuted ? "Включить музыку" : "Выключить музыку"}
-          >
-            {isMuted ? <RiVolumeMuteFill /> : <RiVolumeUpFill />}
-          </button>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={volume}
-            onChange={handleVolumeChange}
-            className="volume-slider"
-            aria-label="Громкость"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+        <MusicPanel
+          hidden={Boolean(lightboxPhoto)}
+          isMuted={isMuted}
+          isExpanded={panelExpanded}
+          volume={volume}
+          onToggle={handleMusicToggleClick}
+          onVolumeChange={handleVolumeChange}
+        />
       )}
 
       {stage === "preload" && (
@@ -1043,6 +819,7 @@ const handleVolumeChange = (e) => {
                 <div className="package">
                   <p>&gt; One encrypted package found for you.</p>
                   <button
+                    type="button"
                     className="decrypt"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1083,56 +860,16 @@ const handleVolumeChange = (e) => {
       )}
 
       {stage === "photos" && (
-        <section className="photo-screen">
+        <>
           <canvas ref={galaxyRef} className="galaxy-canvas" />
-          <div className="photo-container">
-            <div className="photo-pair">
-              {photoPairs.map((pair, pairIndex) => (
-                <div
-                  key={pairIndex}
-                  className={`pair-wrapper ${pairIndex === activePair ? "active" : ""}`}
-                >
-                  {pair.map((photo, idx) => {
-                    const globalIndex = pairIndex * 2 + idx;
-                    const tilt = polaroidTilts[globalIndex];
-                    const startRotate = idx === 0 ? "-12deg" : "12deg";
-                    return (
-                      <div
-                        key={idx}
-                        className="photo-polaroid"
-                        style={{
-                          "--start-rotate": startRotate,
-                          "--tilt": `${tilt}deg`,
-                        }}
-                      >
-                        <div
-                          className="photo-wrapper"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setLightboxPhoto({
-                              src: photo.src,
-                              caption: photo.text,
-                            });
-                          }}
-                        >
-                          <img
-                            src={photo.src}
-                            className="photo"
-                            alt={photo.text}
-                          />
-                          <span className="zoom-icon">
-                            <FiZoomIn />
-                          </span>
-                        </div>
-                        <p className="photo-caption">{photo.text}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+          <PhotoGallery
+            activePair={activePair}
+            polaroidTilts={polaroidTilts}
+            onOpen={(photo) =>
+              setLightboxPhoto({ src: photo.src, caption: photo.text })
+            }
+          />
+        </>
       )}
 
       {stage === "slides" && (
@@ -1166,10 +903,11 @@ const handleVolumeChange = (e) => {
                 gap: 12,
               }}
             >
-              <button className="reencrypt" onClick={() => setStage("final")}>
+              <button type="button" className="reencrypt" onClick={() => setStage("final")}>
                 ← Назад
               </button>
               <button
+                type="button"
                 className="share-btn"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -1207,6 +945,7 @@ const handleVolumeChange = (e) => {
               }}
             >
               <button
+                type="button"
                 className="reencrypt"
                 onClick={() => {
                   setPageIndex(0);
@@ -1217,6 +956,7 @@ const handleVolumeChange = (e) => {
                 открыть открытку
               </button>
               <button
+                type="button"
                 className={`reencrypt ${!isUnlocked ? "locked" : ""}`}
                 onClick={() => {
                   if (!isUnlocked) return;
@@ -1238,79 +978,19 @@ const handleVolumeChange = (e) => {
       )}
 
       {cardOpen && (
-        <div
-          className="card-overlay"
-          onClick={(e) => {
-            e.stopPropagation();
+        <CardModal
+          pageIndex={pageIndex}
+          patternIcons={patternIcons}
+          leaves={leaves}
+          onClose={() => {
             setCardOpen(false);
             setPageIndex(0);
           }}
-        >
-          <div className="card" onClick={(e) => e.stopPropagation()}>
-            <div className="pattern-bg">
-              {patternIcons.map((icon, i) => (
-                <span
-                  key={i}
-                  className="pattern-icon"
-                  style={{
-                    left: `${icon.left}%`,
-                    top: `${icon.top}%`,
-                    fontSize: `${icon.size}px`,
-                    transform: `rotate(${icon.rotation}deg)`,
-                    opacity: icon.opacity,
-                  }}
-                >
-                  {icon.emoji}
-                </span>
-              ))}
-            </div>
-            <button
-              className="card-close"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCardOpen(false);
-                setPageIndex(0);
-              }}
-            >
-              ✕
-            </button>
-            <div className="leaf-animation">
-              {leaves.map((leaf, i) => (
-                <span
-                  key={i}
-                  className="leaf"
-                  style={{
-                    left: `${leaf.left}%`,
-                    animationDelay: `${leaf.delay}s`,
-                    fontSize: `${leaf.size}px`,
-                    animationDuration: `${leaf.duration}s`,
-                  }}
-                >
-                  🍃
-                </span>
-              ))}
-            </div>
-            <h2>{cardPages[pageIndex].title}</h2>
-            <p style={{ whiteSpace: "pre-line" }}>
-              {cardPages[pageIndex].text}
-            </p>
-            <div className="card-controls">
-              <button onClick={() => setPageIndex((p) => Math.max(0, p - 1))}>
-                ←
-              </button>
-              <span>
-                {pageIndex + 1} / {cardPages.length}
-              </span>
-              <button
-                onClick={() =>
-                  setPageIndex((p) => Math.min(cardPages.length - 1, p + 1))
-                }
-              >
-                →
-              </button>
-            </div>
-          </div>
-        </div>
+          onPrevious={() => setPageIndex((page) => Math.max(0, page - 1))}
+          onNext={() =>
+            setPageIndex((page) => Math.min(cardPages.length - 1, page + 1))
+          }
+        />
       )}
 
       {lightboxPhoto && (
