@@ -1,44 +1,44 @@
-import img1 from "../assets/photos/1.jpg";
-import img2 from "../assets/photos/2.jpg";
-import img3 from "../assets/photos/3.jpg";
-import img4 from "../assets/photos/4.jpg";
-import img5 from "../assets/photos/5.jpg";
-import img6 from "../assets/photos/6.jpg";
-import img7 from "../assets/photos/7.jpg";
-import img8 from "../assets/photos/8.jpg";
-import img9 from "../assets/photos/9.jpg";
-import img10 from "../assets/photos/10.jpg";
-import img11 from "../assets/photos/11.jpg";
-import img12 from "../assets/photos/12.jpg";
-import img13 from "../assets/photos/13.jpg";
-import img14 from "../assets/photos/14.jpg";
-import img15 from "../assets/photos/15.jpg";
-import img16 from "../assets/photos/16.jpg";
-import img17 from "../assets/photos/17.jpg";
-import img18 from "../assets/photos/18.jpg";
+import img1 from "../assets/photos/1.webp";
+import img2 from "../assets/photos/2.webp";
+import img3 from "../assets/photos/3.webp";
+import img4 from "../assets/photos/4.webp";
+import img5 from "../assets/photos/5.webp";
+import img6 from "../assets/photos/6.webp";
+import img7 from "../assets/photos/7.webp";
+import img8 from "../assets/photos/8.webp";
+import img9 from "../assets/photos/9.webp";
+import img10 from "../assets/photos/10.webp";
+import img11 from "../assets/photos/11.webp";
+import img12 from "../assets/photos/12.webp";
+import img13 from "../assets/photos/13.webp";
+import img14 from "../assets/photos/14.webp";
+import img15 from "../assets/photos/15.webp";
+import img16 from "../assets/photos/16.webp";
+import img17 from "../assets/photos/17.webp";
+import img18 from "../assets/photos/18.webp";
 import type { CardPage, Photo, StorySlide } from "../types";
 
 export const START_TEXT = "Initializing heart.PROTOCOL_v2.0...";
 
 export const photos: Photo[] = [
-  { src: img1, text: "Твои глаза 💖" },
-  { src: img2, text: "Твоя улыбочка ❤️" },
+  { src: img1, text: "Мы сидим 💖" },
+  { src: img2, text: "Закат ❤️" },
   { src: img3, text: "Ты здесь такая радостная" },
-  { src: img4, text: "Здесь ты так ярко улыбаешься" },
+  { src: img4, text: "Здесь ты такая яркая" },
   { src: img5, text: "Такая счастливая 💖" },
-  { src: img6, text: "Ты такая забавная с рожками" },
-  { src: img7, text: "Ты как всегда невероятна" },
+  { src: img6, text: "Ты такая милая" },
+  { src: img7, text: "Ты как всегда невероятная" },
   { src: img8, text: "Можно смотреть вечно" },
-  { src: img9, text: "С милыми бантиками ❤️" },
+  { src: img9, text: "Наши вечера ❤️" },
   { src: img10, text: "Всегда такая милая" },
-  { src: img11, text: "Этот невероятный взгляд" },
+  { src: img11, text: "Это невероятное время" },
   { src: img12, text: "По утрам всегда хочу смотреть на тебя" },
   { src: img13, text: "Ты как всегда принцесса" },
-  { src: img14, text: "Мой Ангелочек ❤️" },
-  { src: img15, text: "Без чмока со Златой нельзя ❤️" },
-  { src: img16, text: "Как всегда серьёзные со Златой 💖" },
+  { src: img14, text: "Мы дома ❤️" },
+  { src: img15, text: "Без любви нельзя ❤️" },
+  { src: img16, text: "Как всегда вместе 💖" },
   { src: img17, text: "Мы счастливые 💖" },
-  { src: img18, text: "Со Златочкой прижимаетесь ❤️" },
+  { src: img18, text: "Всегда рядом ❤️" },
 ];
 
 export const photoPairs: Photo[][] = [];
@@ -57,7 +57,7 @@ export const slides: StorySlide[] = [
   },
   {
     title: "Маленькие счастливые моменты",
-    text: `Твои сообщения.\nТвоё счастье рядом.\nТвои случайные слова, улыбки и шутки.\nИ именно ты — то счастье, которое мне нужно.`,
+    text: `Твои сообщения.\nТвоё счастье рядом.\nТвои случайные слова, улыбки и шутки.\nИ именно ты то счастье, которое мне нужно.`,
   },
   {
     title: "Что я чувствую",
@@ -111,7 +111,7 @@ export const cardPages: CardPage[] = [
     text: `Я хочу, чтобы ты была счастлива каждую секунду, и благодаря твоей улыбке мир становится ярче.\nЧтобы у тебя было больше поводов улыбаться, радоваться и чувствовать себя хорошо.\n\nЧтобы ты всегда знала, что ты ценная и важная, и что тебя всегда ждут и переживают за тебя.`,
   },
   {
-    title: "Я люблю тебя, Ангелочек ❤️",
+    title: "С днем рождения тебя ❤️",
     text: `Спасибо тебе за то, что ты есть.\nЗа то, что ты существуешь в моей жизни и делаешь её лучше просто своим присутствием.\n\nЯ правда очень рад, что ты рядом с моим сердцем.\nИ я тебя люблю — за твоё спокойствие, сумасшествие и характер.`,
   },
 ];

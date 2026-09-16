@@ -10,6 +10,9 @@ import { MusicPanel } from "./components/MusicPanel";
 import { PhotoGallery } from "./components/PhotoGallery";
 import { PhotoLightbox } from "./components/PhotoLightbox";
 import { START_TEXT, cardPages, photoPairs, photos, slides } from "./data/story";
+import { useMusicPlayer } from "./hooks/useMusicPlayer";
+import { usePreloader } from "./hooks/usePreloader";
+import { useRandomDecorations } from "./hooks/useRandomDecorations";
 
 // Стиль для уведомлений
 const toastStyle = {
@@ -22,6 +25,10 @@ const toastStyle = {
   iconTheme: { primary: "#ff4d6d", secondary: "#fff" },
 };
 
+// Фотографии загружаются только при открытии галереи, а не задерживают старт истории.
+const imageSources = [];
+const audioSources = [music, music2];
+
 // -------------------------------------------------------------
 // Основной компонент App
 // -------------------------------------------------------------
@@ -31,14 +38,10 @@ function App() {
   const heartsRef = useRef(null);
   const heartsRefLocal = useRef([]);
   const startRef = useRef(0);
-  const audioRef1 = useRef(null);
-  const audioRef2 = useRef(null);
-  const currentTrackRef = useRef(1);
   const galaxyRef = useRef(null);
   const starsRef = useRef([]);
 
   const [activePair, setActivePair] = useState(0);
-  const lastVolumeRef = useRef(0.25);
 
   const [typedText, setTypedText] = useState("");
   const [stage, setStage] = useState("preload");
@@ -51,53 +54,28 @@ function App() {
   const [cardOpen, setCardOpen] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
 
-  const [musicPlaying, setMusicPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.25);
-  const [musicAllowed, setMusicAllowed] = useState(false); // ← новый флаг
-
   const [isUnlocked, setIsUnlocked] = useState(false);
-
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [panelExpanded, setPanelExpanded] = useState(false);
-  const hidePanelTimer = useRef(null);
-
-  const realProgressRef = useRef(0);
-  const loadingProgressRef = useRef(0);
 
   const [revealLeaving, setRevealLeaving] = useState(false);
   const consoleTimerRef = useRef(null);
 
-  useEffect(() => {
-    loadingProgressRef.current = loadingProgress;
-  }, [loadingProgress]);
-
-  const [polaroidTilts] = useState(() =>
-    photos.map(() => (Math.random() - 0.5) * 6)
-  );
-
-  const [patternIcons] = useState(() =>
-    Array.from({ length: 60 }).map(() => ({
-      left: 5 + Math.random() * 90,
-      top: 5 + Math.random() * 90,
-      size: 12 + Math.random() * 16,
-      rotation: Math.random() * 360,
-      opacity: 0.06 + Math.random() * 0.1,
-      emoji: Math.random() < 0.5 ? "❤️" : "🌸",
-    }))
-  );
-
-  const [leaves] = useState(() =>
-    Array.from({ length: 25 }).map(() => ({
-      left: Math.random() * 100,
-      delay: Math.random() * 7,
-      size: 14 + Math.random() * 12,
-      duration: 6 + Math.random() * 6,
-    }))
-  );
-
   const [lightboxPhoto, setLightboxPhoto] = useState(null);
 
-  const isMuted = volume === 0;
+  const { polaroidTilts, patternIcons, leaves } = useRandomDecorations();
+  const startConsole = useCallback(() => setStage("console"), []);
+  const loadingProgress = usePreloader({
+    imageSources,
+    audioSources,
+    onReady: startConsole,
+  });
+  const {
+    isMuted,
+    isPanelExpanded,
+    volume,
+    handleToggle: handleMusicToggleClick,
+    handleVolumeChange,
+    playMusic,
+  } = useMusicPlayer({ firstTrack: music, secondTrack: music2 });
   const totalPairs = photoPairs.length;
 
   const shareUrl = "https://gift-chi-five.vercel.app/";
@@ -123,222 +101,6 @@ function App() {
         toast.error("Не удалось скопировать ссылку");
       }
     }
-  };
-
-  // Прелоадер
-  useEffect(() => {
-    const resources = photos.map((p) => p.src);
-    resources.push(music, music2);
-    const total = resources.length;
-    let loadedCount = 0;
-    let animFrame = null;
-    let finishTimer = null;
-    let cancelled = false;
-    const fallbackTimers = [];
-
-    const finishPreload = () => {
-      const startTime = Date.now();
-      const minDelay = 3500;
-      const tryFinish = () => {
-        if (cancelled) return;
-        if (Date.now() - startTime >= minDelay) {
-          finishTimer = window.setTimeout(() => {
-            if (!cancelled) setStage("console");
-          }, 300);
-        } else {
-          requestAnimationFrame(tryFinish);
-        }
-      };
-      tryFinish();
-    };
-
-    const updateRealProgress = () => {
-      if (cancelled) return;
-      loadedCount++;
-      realProgressRef.current = Math.round((loadedCount / total) * 100);
-      if (loadedCount === total) {
-        finishPreload();
-      }
-    };
-
-    const animate = () => {
-      setLoadingProgress((prev) => {
-        if (prev < realProgressRef.current) {
-          return Math.min(prev + 1, realProgressRef.current);
-        }
-        return prev;
-      });
-      if (loadingProgressRef.current < 100) {
-        animFrame = requestAnimationFrame(animate);
-      }
-    };
-    animFrame = requestAnimationFrame(animate);
-
-    photos.forEach((photo) => {
-      const img = new Image();
-      let completed = false;
-      const markLoaded = () => {
-        if (completed) return;
-        completed = true;
-        updateRealProgress();
-      };
-      img.onload = markLoaded;
-      img.onerror = markLoaded;
-      img.src = photo.src;
-    });
-
-    const audio1 = new Audio();
-    audio1.src = music;
-    let audio1Completed = false;
-    const markAudio1Loaded = () => {
-      if (audio1Completed) return;
-      audio1Completed = true;
-      updateRealProgress();
-    };
-    audio1.addEventListener("canplaythrough", markAudio1Loaded, { once: true });
-    audio1.addEventListener("error", markAudio1Loaded, { once: true });
-    fallbackTimers.push(window.setTimeout(markAudio1Loaded, 10000));
-    audio1.load();
-
-    const audio2 = new Audio();
-    audio2.src = music2;
-    let audio2Completed = false;
-    const markAudio2Loaded = () => {
-      if (audio2Completed) return;
-      audio2Completed = true;
-      updateRealProgress();
-    };
-    audio2.addEventListener("canplaythrough", markAudio2Loaded, { once: true });
-    audio2.addEventListener("error", markAudio2Loaded, { once: true });
-    fallbackTimers.push(window.setTimeout(markAudio2Loaded, 10000));
-    audio2.load();
-
-    return () => {
-      cancelled = true;
-      if (animFrame) cancelAnimationFrame(animFrame);
-      if (finishTimer) clearTimeout(finishTimer);
-      fallbackTimers.forEach(clearTimeout);
-      audio1.removeEventListener("canplaythrough", markAudio1Loaded);
-      audio1.removeEventListener("error", markAudio1Loaded);
-      audio2.removeEventListener("canplaythrough", markAudio2Loaded);
-      audio2.removeEventListener("error", markAudio2Loaded);
-    };
-  }, []);
-
-  // Инициализация двух аудио-объектов с переключением по кругу
-  useEffect(() => {
-    const a1 = new Audio(music);
-    const a2 = new Audio(music2);
-    audioRef1.current = a1;
-    audioRef2.current = a2;
-
-    const playNext = () => {
-      if (currentTrackRef.current === 1) {
-        currentTrackRef.current = 2;
-        a2.currentTime = 0;
-        a2.play().catch((e) => {
-          if (e.name !== "AbortError") console.error(e);
-        });
-      } else {
-        currentTrackRef.current = 1;
-        a1.currentTime = 0;
-        a1.play().catch((e) => {
-          if (e.name !== "AbortError") console.error(e);
-        });
-      }
-    };
-
-    a1.addEventListener("ended", playNext);
-    a2.addEventListener("ended", playNext);
-
-    return () => {
-      a1.removeEventListener("ended", playNext);
-      a2.removeEventListener("ended", playNext);
-      a1.pause();
-      a2.pause();
-    };
-  }, []);
-
-  // Громкость и музыка
-  useEffect(() => {
-    if (audioRef1.current) audioRef1.current.volume = volume;
-    if (audioRef2.current) audioRef2.current.volume = volume;
-  }, [volume]);
-
-  useEffect(() => {
-    if (volume === 0 && musicPlaying) {
-      const timer = setTimeout(() => {
-        audioRef1.current?.pause();
-        audioRef2.current?.pause();
-        setMusicPlaying(false);
-      }, 0);
-      return () => clearTimeout(timer);
-    }
-  }, [volume, musicPlaying]);
-
-  const playMusic = useCallback(() => {
-    const a1 = audioRef1.current;
-    const a2 = audioRef2.current;
-    if (!a1 || !a2) return;
-    a1.volume = volume;
-    a2.volume = volume;
-    const current = currentTrackRef.current === 1 ? a1 : a2;
-    current.play()
-      .then(() => {
-        setMusicPlaying(true);
-        setMusicAllowed(true);   // ← теперь музыка разрешена
-      })
-      .catch((e) => {
-        if (e.name !== "AbortError") console.error(e);
-      });
-  }, [volume]);
-
-  const toggleMusic = useCallback(() => {
-    const a1 = audioRef1.current;
-    const a2 = audioRef2.current;
-    if (!a1 || !a2) return;
-    if (volume > 0) {
-      lastVolumeRef.current = volume;
-      setVolume(0);
-      a1.pause();
-      a2.pause();
-      setMusicPlaying(false);
-    } else {
-      const newVolume = lastVolumeRef.current || 0.25;
-      setVolume(newVolume);
-      a1.volume = newVolume;
-      a2.volume = newVolume;
-      if (musicAllowed) {
-        const current = currentTrackRef.current === 1 ? a1 : a2;
-        current.play().then(() => setMusicPlaying(true)).catch((e) => {
-          if (e.name !== "AbortError") console.error(e);
-        });
-      }
-    }
-  }, [volume, musicAllowed]);
-
-const handleVolumeChange = (e) => {
-  e.stopPropagation();
-  const newVolume = Number(e.target.value);
-  setVolume(newVolume);
-  if (newVolume > 0 && !musicPlaying && musicAllowed) playMusic();
-};
-
-  const scheduleHidePanel = () => {
-    if (hidePanelTimer.current) clearTimeout(hidePanelTimer.current);
-    hidePanelTimer.current = setTimeout(() => setPanelExpanded(false), 4000);
-  };
-
-  const handleMusicToggleClick = (e) => {
-    e.stopPropagation();
-    if (window.innerWidth <= 600) {
-      setPanelExpanded((prev) => {
-        if (!prev) scheduleHidePanel();
-        else clearTimeout(hidePanelTimer.current);
-        return !prev;
-      });
-    }
-    toggleMusic();
   };
 
   // Консольный ввод
@@ -778,7 +540,7 @@ const handleVolumeChange = (e) => {
         <MusicPanel
           hidden={Boolean(lightboxPhoto)}
           isMuted={isMuted}
-          isExpanded={panelExpanded}
+          isExpanded={isPanelExpanded}
           volume={volume}
           onToggle={handleMusicToggleClick}
           onVolumeChange={handleVolumeChange}
