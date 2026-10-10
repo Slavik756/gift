@@ -16,7 +16,7 @@
 
 **[Открыть живую версию](https://gift-chi-five.vercel.app/)**
 
-![Основной экран](/heart/public/screenshots/screen.png)
+![Основной экран](public/screenshots/screen.png)
 
 ## О проекте
 
@@ -165,9 +165,13 @@ preload → console → memory → reveal → slides → final → photos → en
 ## Установка и запуск
 
 ```bash
-npm install
+git clone https://github.com/Slavik756/gift.git
+cd gift
+npm ci
 npm run dev
 ```
+
+Все команды выполняются из корня репозитория, где находится `package.json`. Требуется Node.js 22.12 или новее.
 
 Приложение будет доступно по адресу `http://localhost:5173`.
 
@@ -184,3 +188,18 @@ npm run dev
 | `npm run deploy`          | Проверка и публикация на GitHub Pages   |
 
 Перед публикацией рекомендуется выполнить `npm run check`.
+
+## Структура репозитория и Vercel
+
+Приложение находится в корне репозитория: `src/` содержит код и медиа, `public/` — статические файлы, `scripts/` — служебные скрипты. `package.json`, lock-файл и настройки Vite, TypeScript и ESLint лежат рядом с этим README. Вложенная папка `heart/` больше не используется.
+
+Для существующего проекта `gift` в Vercel:
+
+- **Root Directory:** корень репозитория (поле пустое).
+- **Framework Preset:** Vite.
+- **Install Command:** `npm ci`.
+- **Build Command:** `npm run build`.
+- **Output Directory:** `dist`.
+- **Node.js:** 24.x.
+
+При переходе со старой структуры нужно убрать `heart` из Root Directory перед сборкой нового коммита. Для локальной проверки используйте `npm run check`, затем `npm run preview`.
